@@ -1,0 +1,1624 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title></title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="2685.1">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
+    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+  </style>
+</head>
+<body>
+<p class="p1">&lt;!DOCTYPE html&gt;</p>
+<p class="p1">&lt;html lang="en"&gt;</p>
+<p class="p1">&lt;head&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;meta charset="UTF-8"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;title&gt;Poker Tournament Manager&lt;/title&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;script src="https://cdn.tailwindcss.com"&gt;&lt;/script&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;link rel="preconnect" href="https://fonts.googleapis.com"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;link rel="preconnect" href="https://fonts.gstatic.com" crossorigin&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;style&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>body {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>font-family: 'Inter', sans-serif;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>-webkit-tap-highlight-color: transparent;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.timer-display {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>font-size: clamp(4rem, 12vw, 9rem);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>line-height: 1;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>font-variant-numeric: tabular-nums; /* Prevents timer jitter */</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.tabular-nums-text {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>font-variant-numeric: tabular-nums; /* Prevents text timer jitter */</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.control-btn, .player-btn {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>transition: all 0.2s ease-in-out;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.control-btn:active, .player-btn:active {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>transform: scale(0.95);</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.player-btn:disabled {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>opacity: 0.5;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>cursor: not-allowed;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>/* Ensure confirmation modal is on top */</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.modal {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>z-index: 60;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>/* Custom scrollbar */</p>
+<p class="p1"><span class="Apple-converted-space">        </span>::-webkit-scrollbar {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>width: 8px;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>::-webkit-scrollbar-track {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>background: #1f2937;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>::-webkit-scrollbar-thumb {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>background: #4b5563;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>border-radius: 10px;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>::-webkit-scrollbar-thumb:hover {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>background: #6b7280;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>/* Hide number input arrows */</p>
+<p class="p1"><span class="Apple-converted-space">        </span>input[type=number]::-webkit-inner-spin-button,</p>
+<p class="p1"><span class="Apple-converted-space">        </span>input[type=number]::-webkit-outer-spin-button {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>-webkit-appearance: none;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>margin: 0;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>input[type=number] {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>-moz-appearance: textfield; /* Firefox */</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>/* Fullscreen scaling */</p>
+<p class="p1"><span class="Apple-converted-space">        </span>#main-container.is-fullscreen {</p>
+<p class="p1"><span class="Apple-converted-space">             </span>max-width: 100% !important;</p>
+<p class="p1"><span class="Apple-converted-space">             </span>height: 100vh;</p>
+<p class="p1"><span class="Apple-converted-space">             </span>padding: 2rem;</p>
+<p class="p1"><span class="Apple-converted-space">             </span>display: flex;</p>
+<p class="p1"><span class="Apple-converted-space">             </span>flex-direction: column;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">         </span>#main-container.is-fullscreen &gt; .grid {</p>
+<p class="p1"><span class="Apple-converted-space">             </span>flex-grow: 1;</p>
+<p class="p1"><span class="Apple-converted-space">         </span>}</p>
+<p class="p1"><span class="Apple-converted-space">         </span>/* Dropdown Menu */</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.dropdown {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>position: relative;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>display: inline-block;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.dropdown-content {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>display: none;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>position: absolute;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>right: 0;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>background-color: #374151; /* gray-700 */</p>
+<p class="p1"><span class="Apple-converted-space">            </span>min-width: 180px;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>z-index: 100;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>border-radius: 0.5rem; /* rounded-lg */</p>
+<p class="p1"><span class="Apple-converted-space">            </span>padding: 0.5rem 0;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.dropdown-content button {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>color: white;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>padding: 0.75rem 1rem;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>text-decoration: none;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>display: flex;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>align-items: center;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>gap: 0.75rem;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>width: 100%;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>text-align: left;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>background: none;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>border: none;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>font-size: 0.875rem; /* text-sm */</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.dropdown-content button:hover {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>background-color: #4B5563; /* gray-600 */</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.dropdown-content .delete-action {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>color: #F87171; /* red-400 */</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.dropdown-content .delete-action:hover {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>background-color: #991B1B; /* red-800 */</p>
+<p class="p1"><span class="Apple-converted-space">            </span>color: white;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.show {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>display: block;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/style&gt;</p>
+<p class="p1">&lt;/head&gt;</p>
+<p class="p1">&lt;body class="bg-gray-900 text-white antialiased h-screen flex flex-col"&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div id="main-container" class="container mx-auto p-4 max-w-7xl flex flex-col flex-grow"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;!-- Header --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;header class="relative flex justify-center items-center mb-4 shrink-0 h-10"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">             </span>&lt;h1 class="text-2xl md:text-3xl font-bold text-cyan-400 whitespace-nowrap"&gt;Poker Tournament Manager&lt;/h1&gt;</p>
+<p class="p1"><span class="Apple-converted-space">             </span>&lt;div class="absolute right-0 top-1/2 -translate-y-1/2 flex space-x-2"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;button id="player-toggle-btn" title="Players" class="bg-gray-700 hover:bg-gray-600 text-white font-bold p-2 rounded-lg control-btn"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"&gt;&lt;path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/&gt;&lt;circle cx="9" cy="7" r="4"/&gt;&lt;path d="M22 21v-2a4 4 0 0 0-3-3.87"/&gt;&lt;path d="M16 3.13a4 4 0 0 1 0 7.75"/&gt;&lt;/svg&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;button id="settings-toggle-btn" title="Settings" class="bg-gray-700 hover:bg-gray-600 text-white font-bold p-2 rounded-lg control-btn"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"&gt;&lt;circle cx="12" cy="12" r="3"/&gt;&lt;path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/&gt;&lt;/svg&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;button id="fullscreen-btn" title="Fullscreen" class="bg-gray-700 hover:bg-gray-600 text-white font-bold p-2 rounded-lg control-btn"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;svg id="fullscreen-open-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"&gt;&lt;path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/&gt;&lt;/svg&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;svg id="fullscreen-close-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="hidden"&gt;&lt;path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3"/&gt;&lt;/svg&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">             </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/header&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;!-- Bubble Time Alert Modal --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div id="bubble-time-modal" class="fixed inset-0 bg-black bg-opacity-80 flex justify-center items-center modal hidden"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;h2 class="text-6xl md:text-8xl font-bold text-cyan-400 animate-pulse"&gt;Bubble Time&lt;/h2&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;!-- ITM Alert Modal --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div id="itm-modal" class="fixed inset-0 bg-black bg-opacity-80 flex justify-center items-center modal hidden"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="text-center"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                 </span>&lt;h2 class="text-5xl md:text-7xl font-bold text-green-400"&gt;Congratulations!&lt;/h2&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                 </span>&lt;p class="text-3xl md:text-4xl text-white mt-4"&gt;You are In The Money! &lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p2"><span class="Apple-converted-space">        </span></p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;!-- Winner Alert Modal --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div id="winner-modal" class="fixed inset-0 bg-black bg-opacity-80 flex justify-center items-center modal hidden"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">             </span>&lt;button id="winner-modal-close-btn" class="absolute top-6 right-6 text-gray-400 hover:text-white control-btn"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"&gt;&lt;line x1="18" y1="6" x2="6" y2="18"&gt;&lt;/line&gt;&lt;line x1="6" y1="6" x2="18" y2="18"&gt;&lt;/line&gt;&lt;/svg&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="text-center"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                 </span>&lt;h2 id="winner-message" class="text-5xl md:text-7xl font-bold text-yellow-400"&gt;Congratulations, Winner! &lt;/h2&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;!-- Simple Alert Modal --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">         </span>&lt;div id="simple-alert-modal" class="fixed inset-0 bg-black bg-opacity-75 flex justify-center items-center modal hidden"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="bg-gray-800 p-6 rounded-2xl shadow-xl w-11/12 max-w-sm text-center"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;p id="simple-alert-message" class="text-lg mb-6"&gt;Alert message&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;button id="simple-alert-ok-btn" class="bg-cyan-500 hover:bg-cyan-600 text-white font-bold py-2 px-8 rounded-lg control-btn"&gt;OK&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;!-- Confirmation Modal --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div id="confirmation-modal" class="fixed inset-0 bg-black bg-opacity-75 flex justify-center items-center modal hidden"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="bg-gray-800 p-6 rounded-2xl shadow-xl w-11/12 max-w-lg text-center"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;p id="confirmation-message" class="text-lg mb-4"&gt;Are you sure?&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div id="confirmation-details" class="mb-6 text-left"&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="flex justify-center space-x-4"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;button id="cancel-btn" class="bg-gray-600 hover:bg-gray-500 text-white font-bold py-2 px-6 rounded-lg control-btn"&gt;Cancel&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;button id="confirm-btn" class="bg-red-600 hover:bg-red-500 text-white font-bold py-2 px-6 rounded-lg control-btn"&gt;Confirm&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p2"><span class="Apple-converted-space">        </span></p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;!-- Edit Player Name Modal --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div id="edit-player-modal" class="fixed inset-0 bg-black bg-opacity-75 flex justify-center items-center modal hidden"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="bg-gray-800 p-6 rounded-2xl shadow-xl w-11/12 max-w-sm"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;h2 class="text-xl font-bold mb-4"&gt;Edit Player Name&lt;/h2&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;input type="text" id="edit-player-name-input" class="w-full bg-gray-700 border-gray-600 rounded-md shadow-sm py-2 px-3 text-white focus:outline-none focus:ring-cyan-500 focus:border-cyan-500 mb-4"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="flex justify-end space-x-3"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;button id="edit-player-cancel-btn" class="bg-gray-600 hover:bg-gray-500 text-white font-bold py-2 px-4 rounded-lg control-btn"&gt;Cancel&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;button id="edit-player-save-btn" class="bg-cyan-500 hover:bg-cyan-600 text-white font-bold py-2 px-4 rounded-lg control-btn"&gt;Save&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;!-- Settings Modal --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div id="settings-modal" class="fixed inset-0 bg-black bg-opacity-75 flex justify-center items-center z-50 hidden"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="bg-gray-800 p-6 rounded-2xl shadow-xl w-11/12 max-w-md"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;h2 class="text-2xl font-bold mb-4"&gt;Tournament Settings&lt;/h2&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="space-y-4"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;label for="buy-in" class="block text-sm font-medium text-gray-300"&gt;Buy-in&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;input type="number" id="buy-in" value="400" class="mt-1 block w-full bg-gray-700 border-gray-600 rounded-md shadow-sm py-2 px-3 text-white focus:outline-none focus:ring-cyan-500 focus:border-cyan-500"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                     </span>&lt;div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;label for="gtd" class="block text-sm font-medium text-gray-300"&gt;Guaranteed Prize Pool (GTD)&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;input type="number" id="gtd" value="0" class="mt-1 block w-full bg-gray-700 border-gray-600 rounded-md shadow-sm py-2 px-3 text-white focus:outline-none focus:ring-cyan-500 focus:border-cyan-500"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;label for="fee" class="block text-sm font-medium text-gray-300"&gt;Fee (%)&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;input type="number" id="fee" value="10" class="mt-1 block w-full bg-gray-700 border-gray-600 rounded-md shadow-sm py-2 px-3 text-white focus:outline-none focus:ring-cyan-500 focus:border-cyan-500"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;label for="starting-stack" class="block text-sm font-medium text-gray-300"&gt;Starting Stack&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;input type="number" id="starting-stack" value="20000" class="mt-1 block w-full bg-gray-700 border-gray-600 rounded-md shadow-sm py-2 px-3 text-white focus:outline-none focus:ring-cyan-500 focus:border-cyan-500"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;label for="on-time-bonus" class="block text-sm font-medium text-gray-300"&gt;On-Time Bonus&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;input type="number" id="on-time-bonus" value="2000" class="mt-1 block w-full bg-gray-700 border-gray-600 rounded-md shadow-sm py-2 px-3 text-white focus:outline-none focus:ring-cyan-500 focus:border-cyan-500"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="mt-6 flex justify-end space-x-3"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;button id="settings-cancel-btn" class="bg-gray-600 hover:bg-gray-500 text-white font-bold py-2 px-4 rounded-lg control-btn"&gt;Cancel&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;button id="settings-save-btn" class="bg-cyan-500 hover:bg-cyan-600 text-white font-bold py-2 px-4 rounded-lg control-btn"&gt;Save&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p2"><span class="Apple-converted-space">        </span></p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;!-- Player Management Modal --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div id="player-modal" class="fixed inset-0 bg-black bg-opacity-75 flex justify-center items-center z-50 hidden"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="bg-gray-800 p-6 rounded-2xl shadow-xl w-11/12 max-w-xl flex flex-col h-[90vh]"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;h2 class="text-2xl font-bold mb-4 shrink-0"&gt;Players&lt;/h2&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div id="player-management-content" class="flex-grow flex flex-col min-h-0"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div id="player-add-controls" class="flex gap-2 mb-3 shrink-0"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;input type="text" id="player-name-input" placeholder="Player Name" class="flex-grow bg-gray-700 border-gray-600 rounded-md shadow-sm py-2 px-3 text-white focus:outline-none focus:ring-cyan-500 focus:border-cyan-500"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;button id="add-player-btn" class="bg-cyan-500 hover:bg-cyan-600 text-white font-bold py-2 px-4 rounded-lg control-btn"&gt;Add&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div id="multi-bust-controls" class="hidden flex gap-2 mb-3 shrink-0"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                         </span>&lt;button id="multi-bust-confirm-btn" class="flex-grow bg-red-600 hover:bg-red-500 text-white font-bold py-2 px-4 rounded-lg control-btn"&gt;Confirm Busts&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                         </span>&lt;button id="multi-bust-cancel-btn" class="bg-gray-600 hover:bg-gray-500 text-white font-bold py-2 px-4 rounded-lg control-btn"&gt;Cancel&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="flex items-center mb-4 shrink-0"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;input id="on-time-checkbox" type="checkbox" class="w-4 h-4 text-cyan-600 bg-gray-700 border-gray-600 rounded focus:ring-cyan-500"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;label for="on-time-checkbox" class="ml-2 text-sm font-medium text-gray-300"&gt;On-Time Bonus&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div id="player-list" class="space-y-3 flex-grow overflow-y-auto pr-2"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;!-- Player items will be injected here --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="mt-6 flex justify-between items-center shrink-0"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;button id="multi-bust-btn" class="bg-yellow-600 hover:bg-yellow-500 text-white font-bold py-2 px-4 rounded-lg control-btn"&gt;Multiple Bust&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;button id="player-modal-close-btn" class="bg-cyan-500 hover:bg-cyan-600 text-white font-bold py-2 px-4 rounded-lg control-btn"&gt;Done&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;!-- Main Content Grid --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="grid grid-cols-1 lg:grid-cols-4 gap-6 flex-grow min-h-0"&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;!-- Left Column: Info --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="lg:col-span-1 bg-gray-800 p-6 rounded-2xl shadow-lg flex flex-col"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                 </span>&lt;h2 class="text-xl font-bold text-center text-cyan-400 mb-4 pb-2 shrink-0 border-b border-gray-700"&gt;Tournament Info.&lt;/h2&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                 </span>&lt;div id="tournament-info-list" class="flex-grow flex flex-col justify-around"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;!-- Info items will be injected here --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                 </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;!-- Center Column: Clock --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="lg:col-span-2 bg-gray-800 p-6 rounded-2xl shadow-lg flex flex-col h-full"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;h2 id="current-level-display" class="text-xl font-bold text-center text-cyan-400 shrink-0"&gt;Level 1&lt;/h2&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div id="clock-content-wrapper" class="flex-grow flex flex-col items-center justify-between min-h-0 py-2"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;!-- Top Group --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;p class="text-5xl font-bold" id="current-blinds-display"&gt;100 / 100 BBA&lt;/p&gt;</p>
+<p class="p2"><span class="Apple-converted-space">                    </span></p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;!-- Middle Group: Timer --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="text-center w-full my-2"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div class="timer-display font-bold text-white" id="timer-display"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>15:00</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;!-- Bottom Group --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="text-center w-full"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                         </span>&lt;div class="mb-4"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;span class="text-gray-400"&gt;Next Blinds&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;p class="text-2xl text-gray-400 tabular-nums-text" id="next-blinds-display"&gt;100 / 200&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;!-- Time Controls --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div id="time-controls-container" class="flex items-center justify-center gap-2 md:gap-3 w-full flex-wrap border-t border-gray-700 pt-6"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;button id="start-btn" class="control-btn bg-emerald-500 hover:bg-emerald-600 text-white font-bold h-[52px] py-3 px-10 rounded-lg text-2xl"&gt;Start&lt;/button&gt;</p>
+<p class="p2"><span class="Apple-converted-space">                            </span></p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;div id="running-controls" class="hidden items-center justify-center gap-2 md:gap-3 w-full flex-wrap"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;button id="prev-level-btn" title="Previous Level" class="control-btn bg-gray-700 hover:bg-gray-600 text-white font-bold h-[52px] w-[68px] flex items-center justify-center rounded-lg"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                    </span>&lt;svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"&gt;&lt;path d="m11 17-5-5 5-5"/&gt;&lt;path d="m18 17-5-5 5-5"/&gt;&lt;/svg&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;button id="forward-btn" class="control-btn bg-gray-700 hover:bg-gray-600 text-white font-bold h-[52px] w-[68px] flex items-center justify-center rounded-lg"&gt;+60s&lt;/button&gt;</p>
+<p class="p2"><span class="Apple-converted-space">                                </span></p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;button id="pause-btn" class="control-btn bg-yellow-500 hover:bg-yellow-600 text-white font-bold p-3 rounded-lg h-[52px] w-[52px] flex items-center justify-center"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                    </span>&lt;svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="currentColor"&gt;&lt;path d="M8 19c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2s-2 .9-2 2v10c0 1.1.9 2 2 2zm6-12v10c0 1.1.9 2 2 2s2-.9 2-2V7c0-1.1-.9-2-2-2s-2 .9-2 2z"/&gt;&lt;/svg&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;button id="resume-btn" class="control-btn bg-emerald-500 hover:bg-emerald-600 text-white font-bold p-3 rounded-lg h-[52px] w-[52px] hidden items-center justify-center"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                    </span>&lt;svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="currentColor"&gt;&lt;path d="M8 6.82v10.36c0 .79.87 1.27 1.54.84l8.14-5.18c.62-.39.62-1.29 0-1.69L9.54 5.98C8.87 5.55 8 6.03 8 6.82z"/&gt;&lt;/svg&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;/button&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;button id="rewind-btn" class="control-btn bg-gray-700 hover:bg-gray-600 text-white font-bold h-[52px] w-[68px] flex items-center justify-center rounded-lg"&gt;-60s&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;button id="next-level-btn" title="Next Level" class="control-btn bg-gray-700 hover:bg-gray-600 text-white font-bold h-[52px] w-[68px] flex items-center justify-center rounded-lg"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                    </span>&lt;svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"&gt;&lt;path d="m13 17 5-5-5-5"/&gt;&lt;path d="m6 17 5-5-5-5"/&gt;&lt;/svg&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
+<p class="p2"><span class="Apple-converted-space">            </span></p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;!-- Right Column: Payouts --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="lg:col-span-1 bg-gray-800 p-6 rounded-2xl shadow-lg flex flex-col"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;h2 class="text-xl font-bold text-center text-cyan-400 mb-3 pb-2 border-b border-gray-700"&gt;Prize Pool &amp; Payouts&lt;/h2&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div id="prize-pool-container" class="text-center mb-4"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;span class="text-gray-400 text-sm"&gt;Total Prize Pool&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;p id="prize-pool-display" class="text-3xl font-bold text-yellow-400"&gt;0&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div id="payout-list" class="space-y-2"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;!-- Payout structure will be injected here --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;footer class="text-center py-2 shrink-0"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">             </span>&lt;span id="elapsed-time-display" class="text-gray-500 text-sm tabular-nums-text"&gt;Elapsed: 00:00:00&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/footer&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1">&lt;script&gt;</p>
+<p class="p1">document.addEventListener('DOMContentLoaded', () =&gt; {</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>// --- STATE MANAGEMENT ---</p>
+<p class="p1"><span class="Apple-converted-space">    </span>let settings = {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>buyIn: 400,</p>
+<p class="p1"><span class="Apple-converted-space">        </span>fee: 10,</p>
+<p class="p1"><span class="Apple-converted-space">        </span>startingStack: 20000,</p>
+<p class="p1"><span class="Apple-converted-space">        </span>onTimeBonus: 2000,</p>
+<p class="p1"><span class="Apple-converted-space">        </span>levelDuration: 15 * 60, // 15 minutes in seconds</p>
+<p class="p1"><span class="Apple-converted-space">        </span>gtd: 0,</p>
+<p class="p1"><span class="Apple-converted-space">    </span>};</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>const BREAK_LEVELS = [</p>
+<p class="p1"><span class="Apple-converted-space">        </span>{ level: 5, duration: 10 * 60 },</p>
+<p class="p1"><span class="Apple-converted-space">        </span>{ level: 10, duration: 20 * 60 },</p>
+<p class="p1"><span class="Apple-converted-space">        </span>{ level: 15, duration: 10 * 60 },</p>
+<p class="p1"><span class="Apple-converted-space">        </span>{ level: 20, duration: 10 * 60 },</p>
+<p class="p1"><span class="Apple-converted-space">        </span>{ level: 25, duration: 10 * 60 },</p>
+<p class="p1"><span class="Apple-converted-space">    </span>];</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>const blindLevels = [</p>
+<p class="p1"><span class="Apple-converted-space">        </span>{ level: 1, sb: 100, bb: 100, ante: 100 }, { level: 2, sb: 100, bb: 200, ante: 200 },</p>
+<p class="p1"><span class="Apple-converted-space">        </span>{ level: 3, sb: 100, bb: 300, ante: 300 }, { level: 4, sb: 200, bb: 400, ante: 400 },</p>
+<p class="p1"><span class="Apple-converted-space">        </span>{ level: 5, sb: 200, bb: 500, ante: 500 }, { level: 6, sb: 300, bb: 600, ante: 600 },</p>
+<p class="p1"><span class="Apple-converted-space">        </span>{ level: 7, sb: 400, bb: 800, ante: 800 }, { level: 8, sb: 500, bb: 1000, ante: 1000 },</p>
+<p class="p1"><span class="Apple-converted-space">        </span>{ level: 9, sb: 600, bb: 1200, ante: 1200 }, { level: 10, sb: 1000, bb: 1500, ante: 1500 },</p>
+<p class="p1"><span class="Apple-converted-space">        </span>{ level: 11, sb: 1000, bb: 2000, ante: 2000 }, { level: 12, sb: 1500, bb: 3000, ante: 3000 },</p>
+<p class="p1"><span class="Apple-converted-space">        </span>{ level: 13, sb: 2000, bb: 4000, ante: 4000 }, { level: 14, sb: 2500, bb: 5000, ante: 5000 },</p>
+<p class="p1"><span class="Apple-converted-space">        </span>{ level: 15, sb: 3000, bb: 6000, ante: 6000 }, { level: 16, sb: 4000, bb: 8000, ante: 8000 },</p>
+<p class="p1"><span class="Apple-converted-space">        </span>{ level: 17, sb: 5000, bb: 10000, ante: 10000 }, { level: 18, sb: 6000, bb: 12000, ante: 12000 },</p>
+<p class="p1"><span class="Apple-converted-space">        </span>{ level: 19, sb: 8000, bb: 16000, ante: 16000 }, { level: 20, sb: 10000, bb: 20000, ante: 20000 },</p>
+<p class="p1"><span class="Apple-converted-space">        </span>{ level: 21, sb: 15000, bb: 25000, ante: 25000 }, { level: 22, sb: 15000, bb: 30000, ante: 30000 },</p>
+<p class="p1"><span class="Apple-converted-space">        </span>{ level: 23, sb: 20000, bb: 30000, ante: 30000 }, { level: 24, sb: 30000, bb: 60000, ante: 60000 },</p>
+<p class="p1"><span class="Apple-converted-space">        </span>{ level: 25, sb: 40000, bb: 80000, ante: 80000 }, { level: 26, sb: 50000, bb: 100000, ante: 100000 },</p>
+<p class="p1"><span class="Apple-converted-space">    </span>];</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>let players = [];</p>
+<p class="p1"><span class="Apple-converted-space">    </span>let tournamentState = {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>currentLevelIndex: 0,</p>
+<p class="p1"><span class="Apple-converted-space">        </span>timeLeftInLevel: settings.levelDuration,</p>
+<p class="p1"><span class="Apple-converted-space">        </span>isPaused: true,</p>
+<p class="p1"><span class="Apple-converted-space">        </span>isTournamentStarted: false,</p>
+<p class="p1"><span class="Apple-converted-space">        </span>timerInterval: null,</p>
+<p class="p1"><span class="Apple-converted-space">        </span>isBreak: false,</p>
+<p class="p1"><span class="Apple-converted-space">        </span>totalEntries: 0,</p>
+<p class="p1"><span class="Apple-converted-space">        </span>totalBonusChips: 0,</p>
+<p class="p1"><span class="Apple-converted-space">        </span>reEntries: 0,</p>
+<p class="p1"><span class="Apple-converted-space">        </span>addOns: 0,</p>
+<p class="p1"><span class="Apple-converted-space">        </span>totalElapsedTime: 0,</p>
+<p class="p1"><span class="Apple-converted-space">        </span>elapsedTimerInterval: null,</p>
+<p class="p1"><span class="Apple-converted-space">        </span>isDealActive: false,</p>
+<p class="p1"><span class="Apple-converted-space">        </span>hasDealBeenOffered: false,</p>
+<p class="p1"><span class="Apple-converted-space">        </span>isBubbleDealPending: false,</p>
+<p class="p1"><span class="Apple-converted-space">        </span>hasAnnouncedITM: false,</p>
+<p class="p1"><span class="Apple-converted-space">        </span>isITMAnnouncementPending: false,</p>
+<p class="p1"><span class="Apple-converted-space">        </span>wasPausedBeforeModal: null,</p>
+<p class="p1"><span class="Apple-converted-space">        </span>isWinnerPendingConfirmation: false,</p>
+<p class="p1"><span class="Apple-converted-space">        </span>isMultiBustMode: false,</p>
+<p class="p1"><span class="Apple-converted-space">        </span>multiBustSelection: [],</p>
+<p class="p1"><span class="Apple-converted-space">        </span>bubbleProtectionPayouts: 0,</p>
+<p class="p1"><span class="Apple-converted-space">        </span>bubbleProtectionWinners: [],</p>
+<p class="p1"><span class="Apple-converted-space">        </span>editingPlayerId: null,</p>
+<p class="p1"><span class="Apple-converted-space">        </span>overlay: 0,</p>
+<p class="p1"><span class="Apple-converted-space">    </span>};</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>// --- AUDIO CONTEXT for SOUNDS ---</p>
+<p class="p1"><span class="Apple-converted-space">    </span>let audioCtx;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const initAudio = () =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>if (!audioCtx) {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>try {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>audioCtx = new (window.AudioContext || window.webkitAudioContext)();</p>
+<p class="p1"><span class="Apple-converted-space">            </span>} catch (e) {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>console.error("Web Audio API is not supported in this browser");</p>
+<p class="p1"><span class="Apple-converted-space">            </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>};</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const playBeep = () =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>if (!audioCtx) return;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const oscillator = audioCtx.createOscillator();</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const gainNode = audioCtx.createGain();</p>
+<p class="p1"><span class="Apple-converted-space">        </span>oscillator.connect(gainNode);</p>
+<p class="p1"><span class="Apple-converted-space">        </span>gainNode.connect(audioCtx.destination);</p>
+<p class="p1"><span class="Apple-converted-space">        </span>oscillator.type = 'sine';</p>
+<p class="p1"><span class="Apple-converted-space">        </span>oscillator.frequency.setValueAtTime(880, audioCtx.currentTime); // A5</p>
+<p class="p1"><span class="Apple-converted-space">        </span>gainNode.gain.setValueAtTime(0.05, audioCtx.currentTime);</p>
+<p class="p1"><span class="Apple-converted-space">        </span>oscillator.start();</p>
+<p class="p1"><span class="Apple-converted-space">        </span>oscillator.stop(audioCtx.currentTime + 0.1);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>};</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const playChime = () =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>if (!audioCtx) return;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const oscillator = audioCtx.createOscillator();</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const gainNode = audioCtx.createGain();</p>
+<p class="p1"><span class="Apple-converted-space">        </span>oscillator.connect(gainNode);</p>
+<p class="p1"><span class="Apple-converted-space">        </span>gainNode.connect(audioCtx.destination);</p>
+<p class="p1"><span class="Apple-converted-space">        </span>oscillator.type = 'triangle';</p>
+<p class="p1"><span class="Apple-converted-space">        </span>oscillator.frequency.setValueAtTime(1200, audioCtx.currentTime); // High pitch</p>
+<p class="p1"><span class="Apple-converted-space">        </span>gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);</p>
+<p class="p1"><span class="Apple-converted-space">        </span>oscillator.start();</p>
+<p class="p1"><span class="Apple-converted-space">        </span>oscillator.stop(audioCtx.currentTime + 0.2);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>};</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>// --- DOM ELEMENTS ---</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const dom = {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>mainContainer: document.getElementById('main-container'),</p>
+<p class="p1"><span class="Apple-converted-space">        </span>settingsToggleBtn: document.getElementById('settings-toggle-btn'),</p>
+<p class="p1"><span class="Apple-converted-space">        </span>settingsModal: document.getElementById('settings-modal'),</p>
+<p class="p1"><span class="Apple-converted-space">        </span>settingsSaveBtn: document.getElementById('settings-save-btn'),</p>
+<p class="p1"><span class="Apple-converted-space">        </span>settingsCancelBtn: document.getElementById('settings-cancel-btn'),</p>
+<p class="p1"><span class="Apple-converted-space">        </span>playerToggleBtn: document.getElementById('player-toggle-btn'),</p>
+<p class="p1"><span class="Apple-converted-space">        </span>playerModal: document.getElementById('player-modal'),</p>
+<p class="p1"><span class="Apple-converted-space">        </span>playerModalCloseBtn: document.getElementById('player-modal-close-btn'),</p>
+<p class="p1"><span class="Apple-converted-space">        </span>bubbleTimeModal: document.getElementById('bubble-time-modal'),</p>
+<p class="p1"><span class="Apple-converted-space">        </span>itmModal: document.getElementById('itm-modal'),</p>
+<p class="p1"><span class="Apple-converted-space">        </span>winnerModal: document.getElementById('winner-modal'),</p>
+<p class="p1"><span class="Apple-converted-space">        </span>winnerMessage: document.getElementById('winner-message'),</p>
+<p class="p1"><span class="Apple-converted-space">        </span>winnerModalCloseBtn: document.getElementById('winner-modal-close-btn'),</p>
+<p class="p1"><span class="Apple-converted-space">        </span>simpleAlertModal: document.getElementById('simple-alert-modal'),</p>
+<p class="p1"><span class="Apple-converted-space">        </span>simpleAlertMessage: document.getElementById('simple-alert-message'),</p>
+<p class="p1"><span class="Apple-converted-space">        </span>simpleAlertOkBtn: document.getElementById('simple-alert-ok-btn'),</p>
+<p class="p1"><span class="Apple-converted-space">        </span>confirmationModal: document.getElementById('confirmation-modal'),</p>
+<p class="p1"><span class="Apple-converted-space">        </span>confirmationMessage: document.getElementById('confirmation-message'),</p>
+<p class="p1"><span class="Apple-converted-space">        </span>confirmationDetails: document.getElementById('confirmation-details'),</p>
+<p class="p1"><span class="Apple-converted-space">        </span>confirmBtn: document.getElementById('confirm-btn'),</p>
+<p class="p1"><span class="Apple-converted-space">        </span>cancelBtn: document.getElementById('cancel-btn'),</p>
+<p class="p1"><span class="Apple-converted-space">        </span>editPlayerModal: document.getElementById('edit-player-modal'),</p>
+<p class="p1"><span class="Apple-converted-space">        </span>editPlayerNameInput: document.getElementById('edit-player-name-input'),</p>
+<p class="p1"><span class="Apple-converted-space">        </span>editPlayerSaveBtn: document.getElementById('edit-player-save-btn'),</p>
+<p class="p1"><span class="Apple-converted-space">        </span>editPlayerCancelBtn: document.getElementById('edit-player-cancel-btn'),</p>
+<p class="p1"><span class="Apple-converted-space">        </span>buyInInput: document.getElementById('buy-in'),</p>
+<p class="p1"><span class="Apple-converted-space">        </span>feeInput: document.getElementById('fee'),</p>
+<p class="p1"><span class="Apple-converted-space">        </span>gtdInput: document.getElementById('gtd'),</p>
+<p class="p1"><span class="Apple-converted-space">        </span>startingStackInput: document.getElementById('starting-stack'),</p>
+<p class="p1"><span class="Apple-converted-space">        </span>onTimeBonusInput: document.getElementById('on-time-bonus'),</p>
+<p class="p1"><span class="Apple-converted-space">        </span>playerNameInput: document.getElementById('player-name-input'),</p>
+<p class="p1"><span class="Apple-converted-space">        </span>addPlayerBtn: document.getElementById('add-player-btn'),</p>
+<p class="p1"><span class="Apple-converted-space">        </span>onTimeCheckbox: document.getElementById('on-time-checkbox'),</p>
+<p class="p1"><span class="Apple-converted-space">        </span>playerList: document.getElementById('player-list'),</p>
+<p class="p1"><span class="Apple-converted-space">        </span>prizePoolDisplay: document.getElementById('prize-pool-display'),</p>
+<p class="p1"><span class="Apple-converted-space">        </span>prizePoolContainer: document.getElementById('prize-pool-container'),</p>
+<p class="p1"><span class="Apple-converted-space">        </span>payoutList: document.getElementById('payout-list'),</p>
+<p class="p1"><span class="Apple-converted-space">        </span>currentLevelDisplay: document.getElementById('current-level-display'),</p>
+<p class="p1"><span class="Apple-converted-space">        </span>timerDisplay: document.getElementById('timer-display'),</p>
+<p class="p1"><span class="Apple-converted-space">        </span>currentBlindsDisplay: document.getElementById('current-blinds-display'),</p>
+<p class="p1"><span class="Apple-converted-space">        </span>nextBlindsDisplay: document.getElementById('next-blinds-display'),</p>
+<p class="p1"><span class="Apple-converted-space">        </span>startBtn: document.getElementById('start-btn'),</p>
+<p class="p1"><span class="Apple-converted-space">        </span>runningControls: document.getElementById('running-controls'),</p>
+<p class="p1"><span class="Apple-converted-space">        </span>prevLevelBtn: document.getElementById('prev-level-btn'),</p>
+<p class="p1"><span class="Apple-converted-space">        </span>rewindBtn: document.getElementById('rewind-btn'),</p>
+<p class="p1"><span class="Apple-converted-space">        </span>pauseBtn: document.getElementById('pause-btn'),</p>
+<p class="p1"><span class="Apple-converted-space">        </span>resumeBtn: document.getElementById('resume-btn'),</p>
+<p class="p1"><span class="Apple-converted-space">        </span>forwardBtn: document.getElementById('forward-btn'),</p>
+<p class="p1"><span class="Apple-converted-space">        </span>nextLevelBtn: document.getElementById('next-level-btn'),</p>
+<p class="p1"><span class="Apple-converted-space">        </span>tournamentInfoList: document.getElementById('tournament-info-list'),</p>
+<p class="p1"><span class="Apple-converted-space">        </span>fullscreenBtn: document.getElementById('fullscreen-btn'),</p>
+<p class="p1"><span class="Apple-converted-space">        </span>fullscreenOpenIcon: document.getElementById('fullscreen-open-icon'),</p>
+<p class="p1"><span class="Apple-converted-space">        </span>fullscreenCloseIcon: document.getElementById('fullscreen-close-icon'),</p>
+<p class="p1"><span class="Apple-converted-space">        </span>elapsedTimeDisplay: document.getElementById('elapsed-time-display'),</p>
+<p class="p1"><span class="Apple-converted-space">        </span>multiBustBtn: document.getElementById('multi-bust-btn'),</p>
+<p class="p1"><span class="Apple-converted-space">        </span>multiBustControls: document.getElementById('multi-bust-controls'),</p>
+<p class="p1"><span class="Apple-converted-space">        </span>multiBustConfirmBtn: document.getElementById('multi-bust-confirm-btn'),</p>
+<p class="p1"><span class="Apple-converted-space">        </span>multiBustCancelBtn: document.getElementById('multi-bust-cancel-btn'),</p>
+<p class="p1"><span class="Apple-converted-space">        </span>playerAddControls: document.getElementById('player-add-controls'),</p>
+<p class="p1"><span class="Apple-converted-space">    </span>};</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>// --- HELPER FUNCTIONS ---</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>const formatTime = (seconds) =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const mins = Math.floor(seconds / 60);</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const secs = seconds % 60;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>};</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>const formatNumber = (num) =&gt; new Intl.NumberFormat('en-US').format(num);</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>const getOrdinalSuffix = (n) =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const s = ["th", "st", "nd", "rd"];</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const v = n % 100;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>return n + (s[(v - 20) % 10] || s[v] || s[0]);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>const getPayoutStructure = () =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>if (tournamentState.totalEntries &gt; 0) {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>if (tournamentState.totalEntries &lt;= 7) {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>return [{ rank: 1, percent: 0.7 }, { rank: 2, percent: 0.3 }];</p>
+<p class="p1"><span class="Apple-converted-space">            </span>} else if (tournamentState.totalEntries &lt;= 11) {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>return [{ rank: 1, percent: 0.5 }, { rank: 2, percent: 0.3 }, { rank: 3, percent: 0.2 }];</p>
+<p class="p1"><span class="Apple-converted-space">            </span>} else {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>return [{ rank: 1, percent: 0.5 }, { rank: 2, percent: 0.25 }, { rank: 3, percent: 0.15 }, { rank: 4, percent: 0.10 }];</p>
+<p class="p1"><span class="Apple-converted-space">            </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>return [];</p>
+<p class="p1"><span class="Apple-converted-space">    </span>};</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>const updateAllUI = () =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>renderPlayers();</p>
+<p class="p1"><span class="Apple-converted-space">        </span>renderBlinds();</p>
+<p class="p1"><span class="Apple-converted-space">        </span>renderStats();</p>
+<p class="p1"><span class="Apple-converted-space">        </span>renderPayouts();</p>
+<p class="p1"><span class="Apple-converted-space">        </span>renderTimer();</p>
+<p class="p1"><span class="Apple-converted-space">    </span>};</p>
+<p class="p2"><span class="Apple-converted-space">    </span></p>
+<p class="p1"><span class="Apple-converted-space">    </span>// --- RENDER FUNCTIONS ---</p>
+<p class="p2"><span class="Apple-converted-space">    </span></p>
+<p class="p1"><span class="Apple-converted-space">    </span>const renderTimer = () =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>dom.timerDisplay.textContent = formatTime(tournamentState.timeLeftInLevel);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>};</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>const updateTimerVisuals = () =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const timerEl = dom.timerDisplay;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>timerEl.classList.remove('text-yellow-400', 'text-red-500', 'animate-pulse');</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>if (tournamentState.isPaused || !tournamentState.isTournamentStarted) {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>timerEl.classList.add('text-white');</p>
+<p class="p1"><span class="Apple-converted-space">            </span>return;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>if (tournamentState.isBreak) {</p>
+<p class="p1"><span class="Apple-converted-space">             </span>timerEl.classList.add('text-yellow-400');</p>
+<p class="p1"><span class="Apple-converted-space">             </span>return;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>if (tournamentState.timeLeftInLevel &lt;= 5) {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>timerEl.classList.add('text-red-500', 'animate-pulse');</p>
+<p class="p1"><span class="Apple-converted-space">            </span>playBeep();</p>
+<p class="p1"><span class="Apple-converted-space">        </span>} else if (tournamentState.timeLeftInLevel &lt;= 60) {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>timerEl.classList.add('text-yellow-400', 'animate-pulse');</p>
+<p class="p1"><span class="Apple-converted-space">        </span>} else {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>timerEl.classList.add('text-white');</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>};</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>const renderBlinds = () =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const currentLevel = blindLevels[tournamentState.currentLevelIndex];</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const nextLevel = blindLevels[tournamentState.currentLevelIndex + 1];</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>const formatBlindValue = (value, level) =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>if (level &gt;= 20 &amp;&amp; value &gt;= 1000) {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>return `${value / 1000}K`;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>}</p>
+<p class="p1"><span class="Apple-converted-space">            </span>return formatNumber(value);</p>
+<p class="p1"><span class="Apple-converted-space">        </span>};</p>
+<p class="p2"><span class="Apple-converted-space">        </span></p>
+<p class="p1"><span class="Apple-converted-space">        </span>if (tournamentState.isBreak) {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>dom.currentLevelDisplay.textContent = `BREAK TIME`;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>dom.currentBlindsDisplay.textContent = `Resuming Soon`;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>if(nextLevel) {</p>
+<p class="p1"><span class="Apple-converted-space">                 </span>dom.nextBlindsDisplay.textContent = `${formatBlindValue(nextLevel.sb, nextLevel.level)} / ${formatBlindValue(nextLevel.bb, nextLevel.level)} BBA (${formatTime(settings.levelDuration)})`;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>} else {</p>
+<p class="p1"><span class="Apple-converted-space">                 </span>dom.nextBlindsDisplay.textContent = 'Tournament Complete';</p>
+<p class="p1"><span class="Apple-converted-space">            </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>} else {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>dom.currentLevelDisplay.textContent = `Level ${currentLevel.level}`;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>dom.currentBlindsDisplay.textContent = `${formatBlindValue(currentLevel.sb, currentLevel.level)} / ${formatBlindValue(currentLevel.bb, currentLevel.level)} BBA`;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>if (nextLevel) {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>const isBreakAfterCurrent = BREAK_LEVELS.some(b =&gt; b.level === currentLevel.level);</p>
+<p class="p1"><span class="Apple-converted-space">                </span>if (isBreakAfterCurrent) {</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>const breakInfo = BREAK_LEVELS.find(b =&gt; b.level === currentLevel.level);</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>dom.nextBlindsDisplay.textContent = `Next: ${breakInfo.duration / 60} min Break`;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>} else {</p>
+<p class="p1"><span class="Apple-converted-space">                     </span>dom.nextBlindsDisplay.textContent = `${formatBlindValue(nextLevel.sb, nextLevel.level)} / ${formatBlindValue(nextLevel.bb, nextLevel.level)} BBA (${formatTime(settings.levelDuration)})`;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>}</p>
+<p class="p1"><span class="Apple-converted-space">            </span>} else {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>dom.nextBlindsDisplay.textContent = 'Last Level';</p>
+<p class="p1"><span class="Apple-converted-space">            </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>};</p>
+<p class="p2"><span class="Apple-converted-space">    </span></p>
+<p class="p1"><span class="Apple-converted-space">    </span>const renderPlayers = () =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>dom.playerList.innerHTML = '';</p>
+<p class="p2"><span class="Apple-converted-space">        </span></p>
+<p class="p1"><span class="Apple-converted-space">        </span>const eliminatedPlayers = players.filter(p =&gt; p.eliminationOrder &gt; 0);</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const totalUniquePlayersCount = new Set(players.map(p =&gt; p.name)).size;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>let playerRanks = {}; // { playerId: "10th", playerId2: "T-9th" }</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>if (eliminatedPlayers.length &gt; 0) {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const groupedByOrder = eliminatedPlayers.reduce((acc, p) =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>acc[p.eliminationOrder] = acc[p.eliminationOrder] || [];</p>
+<p class="p1"><span class="Apple-converted-space">                </span>acc[p.eliminationOrder].push(p);</p>
+<p class="p1"><span class="Apple-converted-space">                </span>return acc;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>}, {});</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>const sortedOrders = Object.keys(groupedByOrder).map(Number).sort((a, b) =&gt; a - b);<span class="Apple-converted-space"> </span></p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>let rankCursor = totalUniquePlayersCount;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>sortedOrders.forEach(order =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>const group = groupedByOrder[order];</p>
+<p class="p1"><span class="Apple-converted-space">                </span>const isTied = group.length &gt; 1;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>const rankText = isTied ? `T-${getOrdinalSuffix(rankCursor)}` : getOrdinalSuffix(rankCursor);</p>
+<p class="p2"><span class="Apple-converted-space">                </span></p>
+<p class="p1"><span class="Apple-converted-space">                </span>group.forEach(p =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>playerRanks[p.id] = rankText;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>});</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">                </span>rankCursor -= group.length;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>});</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><span class="Apple-converted-space">        </span></p>
+<p class="p1"><span class="Apple-converted-space">        </span>const sortedPlayers = [...players].sort((a, b) =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>if (a.isEliminated &amp;&amp; !b.isEliminated) return 1;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>if (!a.isEliminated &amp;&amp; b.isEliminated) return -1;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>if (a.isEliminated &amp;&amp; b.isEliminated) {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>return b.eliminationOrder - a.eliminationOrder;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>}</p>
+<p class="p1"><span class="Apple-converted-space">            </span>return 0;<span class="Apple-converted-space"> </span></p>
+<p class="p1"><span class="Apple-converted-space">        </span>});</p>
+<p class="p2"><span class="Apple-converted-space">        </span></p>
+<p class="p1"><span class="Apple-converted-space">        </span>sortedPlayers.forEach(player =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const playerDiv = document.createElement('div');</p>
+<p class="p1"><span class="Apple-converted-space">            </span>playerDiv.className = `player-row flex items-center justify-between p-3 rounded-lg bg-gray-700/50 text-gray-400`;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>if(!player.isEliminated) {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>playerDiv.classList.remove('bg-gray-700/50', 'text-gray-400');</p>
+<p class="p1"><span class="Apple-converted-space">                </span>playerDiv.classList.add('bg-gray-700');</p>
+<p class="p1"><span class="Apple-converted-space">            </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>let rankDisplay = '';</p>
+<p class="p1"><span class="Apple-converted-space">            </span>if (player.isEliminated &amp;&amp; playerRanks[player.id]) {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>rankDisplay = `&lt;span class="font-bold text-cyan-400 w-16 shrink-0 text-center"&gt;${playerRanks[player.id]}&lt;/span&gt;`;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>}</p>
+<p class="p2"><span class="Apple-converted-space">            </span></p>
+<p class="p1"><span class="Apple-converted-space">            </span>let onTimeIcon = '';</p>
+<p class="p1"><span class="Apple-converted-space">            </span>if(player.isOnTime) {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>onTimeIcon = `&lt;svg title="On-Time Bonus" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-yellow-400"&gt;&lt;circle cx="12" cy="12" r="10"&gt;&lt;/circle&gt;&lt;polyline points="12 6 12 12 16 14"&gt;&lt;/polyline&gt;&lt;/svg&gt;`;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>}</p>
+<p class="p2"><span class="Apple-converted-space">            </span></p>
+<p class="p1"><span class="Apple-converted-space">            </span>let bubbleProtectionIcon = '';</p>
+<p class="p1"><span class="Apple-converted-space">            </span>if (player.wasAwardedBubbleProtection) {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>const isActive = player.hasBubbleProtection &amp;&amp; !player.isEliminated;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>bubbleProtectionIcon = `&lt;svg title="Bubble Protection ${isActive ? '' : '(Void)'}" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="${isActive ? 'text-green-400' : 'text-gray-600'}"&gt;&lt;path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"&gt;&lt;/path&gt;&lt;/svg&gt;`;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>const addOnIcon = player.hasAddOn ? `&lt;svg title="Add-on" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-purple-400"&gt;&lt;path d="M12 5v14"/&gt;&lt;path d="M5 12h14"/&gt;&lt;/svg&gt;` : '';</p>
+<p class="p2"><span class="Apple-converted-space">            </span></p>
+<p class="p1"><span class="Apple-converted-space">            </span>let actionsHtml = '';</p>
+<p class="p1"><span class="Apple-converted-space">            </span>let kebabMenuHtml = `</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="dropdown"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;button class="more-options-btn player-btn p-2 rounded-md text-gray-400 hover:bg-gray-600 hover:text-white" data-id="${player.id}"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                         </span>&lt;svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"&gt;&lt;circle cx="12" cy="12" r="1"/&gt;&lt;circle cx="12" cy="5" r="1"/&gt;&lt;circle cx="12" cy="19" r="1"/&gt;&lt;/svg&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div id="dropdown-${player.id}" class="dropdown-content"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;button data-id="${player.id}" class="edit-btn player-btn"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"&gt;&lt;path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"&gt;&lt;/path&gt;&lt;/svg&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>Edit Name</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>`;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>if(player.isEliminated) {</p>
+<p class="p1"><span class="Apple-converted-space">                 </span>kebabMenuHtml += `</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;button data-id="${player.id}" class="delete-btn player-btn delete-action"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"&gt;&lt;polyline points="3 6 5 6 21 6"/&gt;&lt;path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/&gt;&lt;line x1="10" y1="11" x2="10" y2="17"/&gt;&lt;line x1="14" y1="11" x2="14" y2="17"/&gt;&lt;/svg&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>Delete Player</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                 </span>`;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>} else {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>kebabMenuHtml += `</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;button data-id="${player.id}" class="add-on-btn player-btn" ${player.hasAddOn ? 'disabled' : ''}&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"&gt;&lt;path d="M12 5v14"/&gt;&lt;path d="M5 12h14"/&gt;&lt;/svg&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>Add-on</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;button data-id="${player.id}" class="bubble-protection-btn player-btn"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="${player.hasBubbleProtection ? 'text-green-400' : ''}"&gt;&lt;path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/&gt;&lt;/svg&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>${player.hasBubbleProtection ? 'Remove' : 'Add'} Protection</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;button data-id="${player.id}" class="delete-btn player-btn delete-action"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"&gt;&lt;polyline points="3 6 5 6 21 6"/&gt;&lt;path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/&gt;&lt;line x1="10" y1="11" x2="10" y2="17"/&gt;&lt;line x1="14" y1="11" x2="14" y2="17"/&gt;&lt;/svg&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>Delete Player</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>`;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>}</p>
+<p class="p1"><span class="Apple-converted-space">             </span>kebabMenuHtml += `&lt;/div&gt;&lt;/div&gt;`;</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>if (tournamentState.isMultiBustMode) {</p>
+<p class="p1"><span class="Apple-converted-space">                 </span>// No actions in multi-bust mode, only checkboxes</p>
+<p class="p1"><span class="Apple-converted-space">            </span>} else if (player.isEliminated) {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>actionsHtml = `</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;button data-id="${player.id}" class="re-entry-btn player-btn bg-blue-600 hover:bg-blue-500 text-white text-sm font-bold py-2 px-3 rounded w-24"&gt;Re-entry&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>${kebabMenuHtml}</p>
+<p class="p1"><span class="Apple-converted-space">                </span>`;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>} else {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>actionsHtml = `</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;button data-id="${player.id}" class="bust-btn player-btn bg-red-600 hover:bg-red-500 text-white text-sm font-bold py-2 px-3 rounded w-24"&gt;Bust&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>${kebabMenuHtml}</p>
+<p class="p1"><span class="Apple-converted-space">                </span>`;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>playerDiv.innerHTML = `</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="flex-1 min-w-0 flex items-center gap-2"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="multi-bust-checkbox-container ${tournamentState.isMultiBustMode &amp;&amp; !player.isEliminated ? 'block' : 'hidden'} w-6"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;input type="checkbox" data-id="${player.id}" class="multi-bust-checkbox w-4 h-4 text-cyan-600 bg-gray-700 border-gray-600 rounded focus:ring-cyan-500" ${tournamentState.multiBustSelection.includes(player.id) ? 'checked' : ''}&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>${rankDisplay}</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;p class="font-semibold truncate" title="${player.name} (${player.entries})"&gt;${player.name} (${player.entries})&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="player-actions-container flex items-center gap-2 pl-4 ${tournamentState.isMultiBustMode ? 'hidden' : ''}"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="flex items-center gap-2 text-sm"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>${onTimeIcon}</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>${bubbleProtectionIcon}</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>${addOnIcon}</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>${actionsHtml}</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>`;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>dom.playerList.appendChild(playerDiv);</p>
+<p class="p1"><span class="Apple-converted-space">        </span>});</p>
+<p class="p1"><span class="Apple-converted-space">    </span>};</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>const renderStats = () =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>let activePlayersCount = players.filter(p =&gt; !p.isEliminated).length;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const totalChips = (tournamentState.totalEntries * settings.startingStack) + tournamentState.totalBonusChips;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>if (activePlayersCount === 0 &amp;&amp; players.length &gt; 0 &amp;&amp; tournamentState.isTournamentStarted) {</p>
+<p class="p1"><span class="Apple-converted-space">             </span>activePlayersCount = 1;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>const averageStack = activePlayersCount &gt; 0 ? Math.round(totalChips / activePlayersCount) : 0;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const currentBB = blindLevels[tournamentState.currentLevelIndex].bb;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>const averageStackInBB = currentBB &gt; 0 ? (averageStack / currentBB).toFixed(1) : "0.0";</p>
+<p class="p2"><span class="Apple-converted-space">        </span></p>
+<p class="p1"><span class="Apple-converted-space">        </span>const elapsedHours = Math.floor(tournamentState.totalElapsedTime / 3600);</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const elapsedMins = Math.floor((tournamentState.totalElapsedTime % 3600) / 60);</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const elapsedSecs = tournamentState.totalElapsedTime % 60;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const formattedElapsedTime = `${String(elapsedHours).padStart(2, '0')}:${String(elapsedMins).padStart(2, '0')}:${String(elapsedSecs).padStart(2, '0')}`;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>dom.elapsedTimeDisplay.textContent = `Elapsed: ${formattedElapsedTime}`;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>const lateRegEndsAtLevel = 8;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const currentLevelNumberForLateReg = blindLevels[tournamentState.currentLevelIndex].level;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>let lateRegHtml = '';</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>if (!tournamentState.isTournamentStarted) {</p>
+<p class="p1"><span class="Apple-converted-space">             </span>lateRegHtml = `</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="text-center"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;span class="text-gray-400 text-sm uppercase tracking-wider"&gt;LATE REG.&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;p class="font-semibold text-xl tabular-nums-text"&gt;Level ${lateRegEndsAtLevel}&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>`;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>else if (currentLevelNumberForLateReg &gt; lateRegEndsAtLevel || (currentLevelNumberForLateReg === lateRegEndsAtLevel &amp;&amp; tournamentState.timeLeftInLevel === 0)) {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>lateRegHtml = `</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="text-center"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;span class="text-gray-400 text-sm uppercase tracking-wider"&gt;LATE REG.&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;p class="font-semibold text-xl tabular-nums-text text-red-400"&gt;CLOSED&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>`;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>} else {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const levelsRemaining = lateRegEndsAtLevel - currentLevelNumberForLateReg;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const timeRemainingInSeconds = (levelsRemaining * settings.levelDuration) + tournamentState.timeLeftInLevel;</p>
+<p class="p2"><span class="Apple-converted-space">            </span></p>
+<p class="p1"><span class="Apple-converted-space">            </span>const lateRegHours = Math.floor(timeRemainingInSeconds / 3600);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const lateRegMins = Math.floor((timeRemainingInSeconds % 3600) / 60);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const lateRegSecs = timeRemainingInSeconds % 60;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const formattedLateRegTime = `${String(lateRegHours).padStart(2, '0')}:${String(lateRegMins).padStart(2, '0')}:${String(lateRegSecs).padStart(2, '0')}`;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>lateRegHtml = `</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="text-center"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;span class="text-gray-400 text-sm uppercase tracking-wider"&gt;LATE REG.&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;p class="font-semibold text-xl tabular-nums-text"&gt;${formattedLateRegTime}&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>`;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>let nextBreakHtml = '&lt;div class="text-center"&gt;';</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const currentLevelNumber = tournamentState.isTournamentStarted ? blindLevels[tournamentState.currentLevelIndex].level : 0;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const nextBreak = BREAK_LEVELS.find(b =&gt; b.level &gt; currentLevelNumber);</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>if (tournamentState.isBreak) {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>nextBreakHtml += '&lt;span class="text-gray-400 text-sm uppercase tracking-wider"&gt;ON BREAK&lt;/span&gt;';</p>
+<p class="p1"><span class="Apple-converted-space">            </span>nextBreakHtml += `&lt;p class="font-semibold text-xl tabular-nums-text text-yellow-400"&gt;${formatTime(tournamentState.timeLeftInLevel)}&lt;/p&gt;`;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>} else if (nextBreak) {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>nextBreakHtml += '&lt;span class="text-gray-400 text-sm uppercase tracking-wider"&gt;NEXT BREAK&lt;/span&gt;';</p>
+<p class="p1"><span class="Apple-converted-space">            </span>let timeUntilBreak;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>if (tournamentState.isTournamentStarted) {</p>
+<p class="p1"><span class="Apple-converted-space">                 </span>const isBreakAfterCurrentLevel = BREAK_LEVELS.some(b =&gt; b.level === currentLevelNumber);</p>
+<p class="p1"><span class="Apple-converted-space">                 </span>if (isBreakAfterCurrentLevel) {</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>timeUntilBreak = tournamentState.timeLeftInLevel;</p>
+<p class="p1"><span class="Apple-converted-space">                 </span>} else {</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>const nextBreakLevelIndex = blindLevels.findIndex(l =&gt; l.level === nextBreak.level);</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>const levelsToNextBreak = nextBreakLevelIndex - tournamentState.currentLevelIndex;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>timeUntilBreak = (levelsToNextBreak * settings.levelDuration) + tournamentState.timeLeftInLevel;</p>
+<p class="p1"><span class="Apple-converted-space">                 </span>}</p>
+<p class="p1"><span class="Apple-converted-space">            </span>} else {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>timeUntilBreak = (BREAK_LEVELS[0].level) * settings.levelDuration;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>}</p>
+<p class="p2"><span class="Apple-converted-space">            </span></p>
+<p class="p1"><span class="Apple-converted-space">            </span>const hours = Math.floor(timeUntilBreak / 3600);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const mins = Math.floor((timeUntilBreak % 3600) / 60);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const secs = timeUntilBreak % 60;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const formattedTimeUntilBreak = `${String(hours).padStart(2, '0')}:${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;</p>
+<p class="p2"><span class="Apple-converted-space">            </span></p>
+<p class="p1"><span class="Apple-converted-space">            </span>nextBreakHtml += `&lt;p class="font-semibold text-xl tabular-nums-text"&gt;${formattedTimeUntilBreak}&lt;/p&gt;`;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>} else {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>nextBreakHtml += '&lt;span class="text-gray-400 text-sm uppercase tracking-wider"&gt;NEXT BREAK&lt;/span&gt;';</p>
+<p class="p1"><span class="Apple-converted-space">            </span>nextBreakHtml += `&lt;p class="font-semibold text-xl tabular-nums-text"&gt;NO MORE BREAKS&lt;/p&gt;`;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>nextBreakHtml += '&lt;/div&gt;';</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>dom.tournamentInfoList.innerHTML = `</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="text-center"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;span class="text-gray-400 text-sm uppercase tracking-wider"&gt;Players Left&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;p class="font-semibold text-xl"&gt;${activePlayersCount} / ${tournamentState.totalEntries}&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="text-center"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;span class="text-gray-400 text-sm uppercase tracking-wider"&gt;Re-entries / Add-ons&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;p class="font-semibold text-xl"&gt;${tournamentState.reEntries} / ${tournamentState.addOns}&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="text-center"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;span class="text-gray-400 text-sm uppercase tracking-wider"&gt;Chips in Play&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;p class="font-semibold text-xl"&gt;${formatNumber(totalChips)}&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="text-center"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;span class="text-gray-400 text-sm uppercase tracking-wider"&gt;Average Stack&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;p class="font-semibold text-xl"&gt;${formatNumber(averageStack)}&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;p class="text-cyan-400 text-base"&gt;${averageStackInBB} BBs&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>${lateRegHtml}</p>
+<p class="p1"><span class="Apple-converted-space">            </span>${nextBreakHtml}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>`;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>};</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>const renderPayouts = () =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const totalBuyInPrize = (tournamentState.totalEntries * settings.buyIn) * (1 - settings.fee / 100);</p>
+<p class="p1"><span class="Apple-converted-space">        </span>let prizePoolForDisplay = totalBuyInPrize;</p>
+<p class="p2"><span class="Apple-converted-space">        </span></p>
+<p class="p1"><span class="Apple-converted-space">        </span>if (settings.gtd &gt; 0 &amp;&amp; settings.gtd &gt; totalBuyInPrize) {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>tournamentState.overlay = settings.gtd - totalBuyInPrize;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>prizePoolForDisplay = settings.gtd;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>} else {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>tournamentState.overlay = 0;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><span class="Apple-converted-space">        </span></p>
+<p class="p1"><span class="Apple-converted-space">        </span>const prizePoolForCalc = prizePoolForDisplay - tournamentState.bubbleProtectionPayouts;</p>
+<p class="p2"><span class="Apple-converted-space">        </span></p>
+<p class="p1"><span class="Apple-converted-space">        </span>dom.prizePoolDisplay.textContent = formatNumber(prizePoolForDisplay);</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>const existingOverlay = document.getElementById('overlay-display');</p>
+<p class="p1"><span class="Apple-converted-space">        </span>if(existingOverlay) existingOverlay.remove();</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>if (tournamentState.overlay &gt; 0) {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const overlayDiv = document.createElement('div');</p>
+<p class="p1"><span class="Apple-converted-space">            </span>overlayDiv.id = 'overlay-display';</p>
+<p class="p1"><span class="Apple-converted-space">            </span>overlayDiv.className = 'text-center mb-2';</p>
+<p class="p1"><span class="Apple-converted-space">            </span>overlayDiv.innerHTML = `&lt;span class="text-sm text-gray-400"&gt;Overlay: &lt;/span&gt;&lt;span class="text-sm font-semibold text-red-400"&gt;${formatNumber(tournamentState.overlay)}&lt;/span&gt;`;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>dom.prizePoolContainer.appendChild(overlayDiv);</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><span class="Apple-converted-space">    </span></p>
+<p class="p1"><span class="Apple-converted-space">        </span>const payoutStructure = getPayoutStructure();</p>
+<p class="p2"><span class="Apple-converted-space">    </span></p>
+<p class="p1"><span class="Apple-converted-space">        </span>let finalPayouts = [];</p>
+<p class="p1"><span class="Apple-converted-space">        </span>if (tournamentState.isDealActive &amp;&amp; payoutStructure.length &gt; 0) {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const bubblePrize = settings.buyIn;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const adjustedPrizePool = prizePoolForCalc - bubblePrize;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>payoutStructure.forEach(p =&gt; finalPayouts.push({ rank: p.rank, amount: Math.floor(adjustedPrizePool * p.percent) }));</p>
+<p class="p1"><span class="Apple-converted-space">            </span>finalPayouts.push({ rank: payoutStructure.length + 1, amount: bubblePrize });</p>
+<p class="p1"><span class="Apple-converted-space">        </span>} else {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>payoutStructure.forEach(p =&gt; finalPayouts.push({ rank: p.rank, amount: Math.floor(prizePoolForCalc * p.percent) }));</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><span class="Apple-converted-space">    </span></p>
+<p class="p1"><span class="Apple-converted-space">        </span>dom.payoutList.innerHTML = '';</p>
+<p class="p2"><span class="Apple-converted-space">    </span></p>
+<p class="p1"><span class="Apple-converted-space">        </span>const eliminatedPlayers = players.filter(p =&gt; p.eliminationOrder &gt; 0);</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const totalUniquePlayersCount = new Set(players.map(p =&gt; p.name)).size;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const processedPayouts = [];<span class="Apple-converted-space"> </span></p>
+<p class="p2"><span class="Apple-converted-space">    </span></p>
+<p class="p1"><span class="Apple-converted-space">        </span>if (eliminatedPlayers.length &gt; 0) {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const groupedByOrder = eliminatedPlayers.reduce((acc, p) =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>acc[p.eliminationOrder] = acc[p.eliminationOrder] || [];</p>
+<p class="p1"><span class="Apple-converted-space">                </span>acc[p.eliminationOrder].push(p);</p>
+<p class="p1"><span class="Apple-converted-space">                </span>return acc;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>}, {});</p>
+<p class="p2"><span class="Apple-converted-space">    </span></p>
+<p class="p1"><span class="Apple-converted-space">            </span>const sortedOrders = Object.keys(groupedByOrder).map(Number).sort((a, b) =&gt; a - b);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>let rankCursor = totalUniquePlayersCount;</p>
+<p class="p2"><span class="Apple-converted-space">    </span></p>
+<p class="p1"><span class="Apple-converted-space">            </span>sortedOrders.forEach(order =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>const group = groupedByOrder[order];</p>
+<p class="p1"><span class="Apple-converted-space">                </span>const ranksForGroup = Array.from({ length: group.length }, (_, i) =&gt; rankCursor - i);</p>
+<p class="p2"><span class="Apple-converted-space">                </span></p>
+<p class="p1"><span class="Apple-converted-space">                </span>const prizesToSplit = ranksForGroup</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>.map(rank =&gt; finalPayouts.find(p =&gt; p.rank === rank)?.amount || 0)</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>.filter(amount =&gt; amount &gt; 0);</p>
+<p class="p2"><span class="Apple-converted-space">                </span></p>
+<p class="p1"><span class="Apple-converted-space">                </span>if (prizesToSplit.length &gt; 0) {</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>const totalPrize = prizesToSplit.reduce((sum, amount) =&gt; sum + amount, 0);</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>const splitAmount = Math.floor(totalPrize / group.length);</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>const rankText = group.length &gt; 1 ? `T-${getOrdinalSuffix(rankCursor)}` : getOrdinalSuffix(rankCursor);</p>
+<p class="p2"><span class="Apple-converted-space">                    </span></p>
+<p class="p1"><span class="Apple-converted-space">                    </span>group.forEach(player =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>processedPayouts.push({</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>player,</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>rankText,</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>amount: splitAmount,</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>rank: rankCursor<span class="Apple-converted-space"> </span></p>
+<p class="p1"><span class="Apple-converted-space">                        </span>});</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>});</p>
+<p class="p1"><span class="Apple-converted-space">                </span>}</p>
+<p class="p1"><span class="Apple-converted-space">                </span>rankCursor -= group.length;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>});</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><span class="Apple-converted-space">    </span></p>
+<p class="p1"><span class="Apple-converted-space">        </span>const displayRows = [];</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const filledRanks = new Set();</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const resultsInMoney = processedPayouts.filter(p =&gt; p.amount &gt; 0);</p>
+<p class="p2"><span class="Apple-converted-space">    </span></p>
+<p class="p1"><span class="Apple-converted-space">        </span>resultsInMoney.forEach(result =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const isAlreadyAdded = displayRows.some(row =&gt; row.player.id === result.player.id);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>if(isAlreadyAdded) return;</p>
+<p class="p2"><span class="Apple-converted-space">            </span></p>
+<p class="p1"><span class="Apple-converted-space">            </span>const group = resultsInMoney.filter(r =&gt; r.rankText === result.rankText);</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>group.forEach(tiedPlayer =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">                 </span>displayRows.push({</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>isPlaceholder: false,</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>rank: tiedPlayer.rank,<span class="Apple-converted-space"> </span></p>
+<p class="p1"><span class="Apple-converted-space">                    </span>rankText: tiedPlayer.rankText,</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>amount: tiedPlayer.amount,</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>player: tiedPlayer.player</p>
+<p class="p1"><span class="Apple-converted-space">                </span>});</p>
+<p class="p1"><span class="Apple-converted-space">                </span>filledRanks.add(tiedPlayer.rank);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>});</p>
+<p class="p2"><span class="Apple-converted-space">             </span></p>
+<p class="p1"><span class="Apple-converted-space">            </span>const baseRank = parseInt(result.rankText.replace(/T-|\D/g, ''));</p>
+<p class="p1"><span class="Apple-converted-space">            </span>for (let i = 0; i &lt; group.length; i++) {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>filledRanks.add(baseRank - i);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>});</p>
+<p class="p2"><span class="Apple-converted-space">    </span></p>
+<p class="p1"><span class="Apple-converted-space">        </span>finalPayouts.forEach(payoutSpot =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>if (!filledRanks.has(payoutSpot.rank)) {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>displayRows.push({</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>isPlaceholder: true,</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>rank: payoutSpot.rank,</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>rankText: getOrdinalSuffix(payoutSpot.rank),</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>amount: payoutSpot.amount,</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>player: { name: '...' }</p>
+<p class="p1"><span class="Apple-converted-space">                </span>});</p>
+<p class="p1"><span class="Apple-converted-space">            </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>});</p>
+<p class="p2"><span class="Apple-converted-space">    </span></p>
+<p class="p1"><span class="Apple-converted-space">        </span>displayRows.sort((a, b) =&gt; a.rank - b.rank);</p>
+<p class="p2"><span class="Apple-converted-space">    </span></p>
+<p class="p1"><span class="Apple-converted-space">        </span>displayRows.forEach(row =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const payoutDiv = document.createElement('div');</p>
+<p class="p1"><span class="Apple-converted-space">            </span>payoutDiv.className = 'flex justify-between items-center bg-gray-700 p-2 rounded-lg';</p>
+<p class="p1"><span class="Apple-converted-space">            </span>payoutDiv.innerHTML = `</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="flex items-center"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="w-14 shrink-0"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;span class="font-bold text-cyan-400"&gt;${row.rankText}&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;span class="text-gray-400 text-sm truncate" title="${row.player.name}"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>${row.player.name}</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;span class="font-semibold text-yellow-400"&gt;${formatNumber(row.amount)}&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>`;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>dom.payoutList.appendChild(payoutDiv);</p>
+<p class="p1"><span class="Apple-converted-space">        </span>});</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>if (tournamentState.bubbleProtectionWinners.length &gt; 0) {</p>
+<p class="p1"><span class="Apple-converted-space">             </span>const separator = document.createElement('hr');</p>
+<p class="p1"><span class="Apple-converted-space">             </span>separator.className = 'my-3 border-gray-600';</p>
+<p class="p1"><span class="Apple-converted-space">             </span>dom.payoutList.appendChild(separator);</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">             </span>const header = document.createElement('h3');</p>
+<p class="p1"><span class="Apple-converted-space">             </span>header.className = 'text-center text-sm text-gray-400 uppercase tracking-wider mb-2';</p>
+<p class="p1"><span class="Apple-converted-space">             </span>header.textContent = 'Bubble Protection Payout';</p>
+<p class="p1"><span class="Apple-converted-space">             </span>dom.payoutList.appendChild(header);</p>
+<p class="p2"><span class="Apple-converted-space">            </span></p>
+<p class="p1"><span class="Apple-converted-space">            </span>tournamentState.bubbleProtectionWinners.forEach(payout =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>const payoutDiv = document.createElement('div');</p>
+<p class="p1"><span class="Apple-converted-space">                </span>payoutDiv.className = 'flex justify-between items-center bg-gray-700 p-2 rounded-lg';</p>
+<p class="p1"><span class="Apple-converted-space">                </span>payoutDiv.innerHTML = `</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="flex items-center"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div class="w-14 shrink-0"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;span class="font-bold text-cyan-400"&gt;Bubble&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;span class="text-gray-400 text-sm truncate" title="${payout.name}"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>${payout.name}</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;span class="font-semibold text-yellow-400"&gt;${formatNumber(payout.amount)}&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>`;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>dom.payoutList.appendChild(payoutDiv);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>});</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>};</p>
+<p class="p2"><span class="Apple-converted-space">    </span></p>
+<p class="p1"><span class="Apple-converted-space">    </span>// --- EVENT HANDLERS ---</p>
+<p class="p2"><span class="Apple-converted-space">    </span></p>
+<p class="p1"><span class="Apple-converted-space">    </span>const handleAddPlayer = () =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const name = dom.playerNameInput.value.trim();</p>
+<p class="p1"><span class="Apple-converted-space">        </span>if (!name) return;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>const isOnTime = dom.onTimeCheckbox.checked;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const existingPlayer = players.find(p =&gt; p.name.toLowerCase() === name.toLowerCase());</p>
+<p class="p2"><span class="Apple-converted-space">        </span></p>
+<p class="p1"><span class="Apple-converted-space">        </span>if (existingPlayer) {</p>
+<p class="p1"><span class="Apple-converted-space">             </span>showSimpleAlert('A player with this name already exists.');</p>
+<p class="p1"><span class="Apple-converted-space">            </span>return;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>players.push({</p>
+<p class="p1"><span class="Apple-converted-space">            </span>id: Date.now(),</p>
+<p class="p1"><span class="Apple-converted-space">            </span>name: name,</p>
+<p class="p1"><span class="Apple-converted-space">            </span>entries: 1,</p>
+<p class="p1"><span class="Apple-converted-space">            </span>hasAddOn: false,</p>
+<p class="p1"><span class="Apple-converted-space">            </span>isOnTime: isOnTime,</p>
+<p class="p1"><span class="Apple-converted-space">            </span>isEliminated: false,</p>
+<p class="p1"><span class="Apple-converted-space">            </span>eliminationOrder: 0,</p>
+<p class="p1"><span class="Apple-converted-space">            </span>hasBubbleProtection: false,</p>
+<p class="p1"><span class="Apple-converted-space">            </span>wasAwardedBubbleProtection: false,</p>
+<p class="p1"><span class="Apple-converted-space">        </span>});</p>
+<p class="p1"><span class="Apple-converted-space">        </span>if (isOnTime) {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>tournamentState.totalBonusChips += settings.onTimeBonus;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>tournamentState.totalEntries++;</p>
+<p class="p2"><span class="Apple-converted-space">       </span></p>
+<p class="p1"><span class="Apple-converted-space">        </span>dom.playerNameInput.value = '';</p>
+<p class="p1"><span class="Apple-converted-space">        </span>dom.onTimeCheckbox.checked = false;<span class="Apple-converted-space"> </span></p>
+<p class="p1"><span class="Apple-converted-space">        </span>updateAllUI();</p>
+<p class="p1"><span class="Apple-converted-space">    </span>};</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>const processBusts = (bustedPlayerIds) =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const maxOrder = Math.max(0, ...players.map(p =&gt; p.eliminationOrder));</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const bustOrder = maxOrder + 1;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>bustedPlayerIds.forEach(playerId =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const player = players.find(p =&gt; p.id === playerId);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>if (player) {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>player.isEliminated = true;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>player.eliminationOrder = bustOrder;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>player.hasBubbleProtection = false;<span class="Apple-converted-space"> </span></p>
+<p class="p1"><span class="Apple-converted-space">            </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>});</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>const payoutStructure = getPayoutStructure();</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const numPayoutSpots = payoutStructure.length;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const activePlayersCount = players.filter(p =&gt; !p.isEliminated).length;</p>
+<p class="p2"><span class="Apple-converted-space">        </span></p>
+<p class="p1"><span class="Apple-converted-space">        </span>const lateRegEndsAtLevel = 8;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const currentLevelNumber = blindLevels[tournamentState.currentLevelIndex].level;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const isLateRegClosed = currentLevelNumber &gt; lateRegEndsAtLevel || (currentLevelNumber === lateRegEndsAtLevel &amp;&amp; tournamentState.timeLeftInLevel === 0);</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>if (activePlayersCount === numPayoutSpots) { // This is the stone bubble</p>
+<p class="p1"><span class="Apple-converted-space">            </span>bustedPlayerIds.forEach(playerId =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>const bustedPlayer = players.find(p =&gt; p.id === playerId);</p>
+<p class="p1"><span class="Apple-converted-space">                </span>if (bustedPlayer &amp;&amp; bustedPlayer.wasAwardedBubbleProtection) {</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>tournamentState.bubbleProtectionPayouts += settings.buyIn;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>tournamentState.bubbleProtectionWinners.push({ name: bustedPlayer.name, amount: settings.buyIn });</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>showSimpleAlert(`${bustedPlayer.name} is on the bubble and receives their buy-in back!`);</p>
+<p class="p1"><span class="Apple-converted-space">                </span>}</p>
+<p class="p1"><span class="Apple-converted-space">            </span>});</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>if (isLateRegClosed &amp;&amp; tournamentState.isTournamentStarted &amp;&amp; activePlayersCount === numPayoutSpots &amp;&amp; numPayoutSpots &gt; 0 &amp;&amp; !tournamentState.hasAnnouncedITM) {</p>
+<p class="p1"><span class="Apple-converted-space">             </span>tournamentState.isITMAnnouncementPending = true;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><span class="Apple-converted-space">        </span></p>
+<p class="p1"><span class="Apple-converted-space">        </span>if (isLateRegClosed &amp;&amp; tournamentState.isTournamentStarted &amp;&amp; activePlayersCount === (numPayoutSpots + 1) &amp;&amp; numPayoutSpots &gt; 0 &amp;&amp; !tournamentState.isDealActive &amp;&amp; !tournamentState.hasDealBeenOffered) {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>tournamentState.isBubbleDealPending = true;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><span class="Apple-converted-space">        </span></p>
+<p class="p1"><span class="Apple-converted-space">        </span>if (activePlayersCount &lt;= 1 &amp;&amp; players.length &gt; 1) {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>tournamentState.isWinnerPendingConfirmation = true;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>} else if (activePlayersCount === 0 &amp;&amp; players.length &gt; 0) {</p>
+<p class="p1"><span class="Apple-converted-space">             </span>handlePauseTimer();</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><span class="Apple-converted-space">        </span></p>
+<p class="p1"><span class="Apple-converted-space">        </span>updateAllUI();</p>
+<p class="p1"><span class="Apple-converted-space">    </span>};</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>const handlePlayerAction = (e) =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const target = e.target.closest('.player-btn');</p>
+<p class="p1"><span class="Apple-converted-space">        </span>if (!target) return;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>const playerId = parseInt(target.dataset.id);</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const player = players.find(p =&gt; p.id === playerId);</p>
+<p class="p1"><span class="Apple-converted-space">        </span>if (!player) return;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>if (target.classList.contains('more-options-btn')) {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.querySelectorAll('.dropdown-content').forEach(menu =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>if(menu.id !== `dropdown-${playerId}`) menu.classList.remove('show');</p>
+<p class="p1"><span class="Apple-converted-space">            </span>});</p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById(`dropdown-${playerId}`).classList.toggle('show');</p>
+<p class="p1"><span class="Apple-converted-space">            </span>return;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>if (target.classList.contains('bubble-protection-btn')) {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>player.hasBubbleProtection = !player.hasBubbleProtection;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>if (player.hasBubbleProtection) {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>player.wasAwardedBubbleProtection = true;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>}</p>
+<p class="p1"><span class="Apple-converted-space">            </span>renderPlayers();</p>
+<p class="p1"><span class="Apple-converted-space">            </span>return;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>if (target.classList.contains('edit-btn')) {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>openEditPlayerModal(player);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>return;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>if (target.classList.contains('re-entry-btn')) {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>showConfirmation(`Confirm Re-entry for ${player.name}?`, '', () =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>player.isEliminated = false;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>player.eliminationOrder = 0;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>player.entries++;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>player.hasBubbleProtection = false;<span class="Apple-converted-space"> </span></p>
+<p class="p1"><span class="Apple-converted-space">                </span>tournamentState.totalEntries++;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>tournamentState.reEntries++;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>updateAllUI();</p>
+<p class="p1"><span class="Apple-converted-space">            </span>});</p>
+<p class="p1"><span class="Apple-converted-space">        </span>} else if (target.classList.contains('add-on-btn')) {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>showConfirmation(`Confirm Add-on for ${player.name}?`, '', () =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>player.hasAddOn = true;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>tournamentState.totalEntries++;<span class="Apple-converted-space"> </span></p>
+<p class="p1"><span class="Apple-converted-space">                </span>tournamentState.addOns++;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>updateAllUI();</p>
+<p class="p1"><span class="Apple-converted-space">            </span>});</p>
+<p class="p1"><span class="Apple-converted-space">        </span>} else if (target.classList.contains('bust-btn')) {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>showConfirmation(`Confirm Bust Out for ${player.name}?`, '', () =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>processBusts([playerId]);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>});</p>
+<p class="p1"><span class="Apple-converted-space">        </span>} else if (target.classList.contains('delete-btn')) {</p>
+<p class="p1"><span class="Apple-converted-space">             </span>showConfirmation(`Permanently delete ${player.name}? This cannot be undone.`, '', () =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>if (player.isOnTime) tournamentState.totalBonusChips -= settings.onTimeBonus;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>players = players.filter(p =&gt; p.id !== playerId);</p>
+<p class="p2"><span class="Apple-converted-space">                </span></p>
+<p class="p1"><span class="Apple-converted-space">                </span>let newTotalEntries = 0, newReEntries = 0, newAddOns = 0;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>players.forEach(p =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>newTotalEntries += p.entries;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>if (p.hasAddOn) newAddOns++;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>if (p.entries &gt; 1) newReEntries += (p.entries - 1) - (p.hasAddOn ? 1 : 0);</p>
+<p class="p1"><span class="Apple-converted-space">                </span>});</p>
+<p class="p1"><span class="Apple-converted-space">                </span>tournamentState.totalEntries = newTotalEntries;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>tournamentState.reEntries = newReEntries;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>tournamentState.addOns = newAddOns;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">                </span>updateAllUI();</p>
+<p class="p1"><span class="Apple-converted-space">            </span>});</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>};</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>const advanceToNextStage = (direction = 1) =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const currentLevelNumber = blindLevels[tournamentState.currentLevelIndex].level;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>if (tournamentState.isBreak) {<span class="Apple-converted-space"> </span></p>
+<p class="p1"><span class="Apple-converted-space">            </span>tournamentState.isBreak = false;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>tournamentState.currentLevelIndex += direction &gt; 0 ? 1 : 0;<span class="Apple-converted-space"> </span></p>
+<p class="p1"><span class="Apple-converted-space">            </span>if (tournamentState.currentLevelIndex &gt;= blindLevels.length) {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>tournamentState.currentLevelIndex = blindLevels.length - 1;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>}</p>
+<p class="p1"><span class="Apple-converted-space">            </span>tournamentState.timeLeftInLevel = settings.levelDuration;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>} else {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const breakInfo = BREAK_LEVELS.find(b =&gt; b.level === currentLevelNumber);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>if (breakInfo &amp;&amp; direction &gt; 0) {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>tournamentState.isBreak = true;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>tournamentState.timeLeftInLevel = breakInfo.duration;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>} else {<span class="Apple-converted-space"> </span></p>
+<p class="p1"><span class="Apple-converted-space">                 </span>const newIndex = tournamentState.currentLevelIndex + direction;</p>
+<p class="p1"><span class="Apple-converted-space">                 </span>if (newIndex &gt;= 0 &amp;&amp; newIndex &lt; blindLevels.length) {</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>tournamentState.currentLevelIndex = newIndex;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>tournamentState.timeLeftInLevel = settings.levelDuration;</p>
+<p class="p1"><span class="Apple-converted-space">                 </span>}</p>
+<p class="p1"><span class="Apple-converted-space">            </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>playChime();</p>
+<p class="p1"><span class="Apple-converted-space">        </span>updateAllUI();</p>
+<p class="p1"><span class="Apple-converted-space">    </span>};</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>const handleLevelChange = (direction) =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>if (direction &lt; 0) { // Going backwards</p>
+<p class="p1"><span class="Apple-converted-space">            </span>if(tournamentState.isBreak) {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>tournamentState.isBreak = false;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>tournamentState.timeLeftInLevel = settings.levelDuration;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>} else {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>const newIndex = tournamentState.currentLevelIndex - 1;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>if (newIndex &lt; 0) return;</p>
+<p class="p2"><span class="Apple-converted-space">                </span></p>
+<p class="p1"><span class="Apple-converted-space">                </span>const prevLevel = blindLevels[newIndex];</p>
+<p class="p1"><span class="Apple-converted-space">                </span>const breakAfterPrevLevel = BREAK_LEVELS.find(b =&gt; b.level === prevLevel.level);</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">                </span>if (breakAfterPrevLevel) {</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>tournamentState.isBreak = true;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>tournamentState.timeLeftInLevel = breakAfterPrevLevel.duration;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>tournamentState.currentLevelIndex = newIndex;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>} else {</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>tournamentState.currentLevelIndex = newIndex;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>tournamentState.timeLeftInLevel = settings.levelDuration;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>}</p>
+<p class="p1"><span class="Apple-converted-space">            </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>} else { // Going forwards</p>
+<p class="p1"><span class="Apple-converted-space">             </span>advanceToNextStage(direction);</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>updateAllUI();</p>
+<p class="p1"><span class="Apple-converted-space">    </span>};</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>const handleTimeAdjustment = (seconds) =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>tournamentState.timeLeftInLevel += seconds;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>if (tournamentState.timeLeftInLevel &lt; 0) tournamentState.timeLeftInLevel = 0;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>updateAllUI();</p>
+<p class="p1"><span class="Apple-converted-space">    </span>};</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>const handlePauseTimer = () =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>tournamentState.isPaused = true;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>clearInterval(tournamentState.timerInterval);</p>
+<p class="p1"><span class="Apple-converted-space">        </span>clearInterval(tournamentState.elapsedTimerInterval);</p>
+<p class="p1"><span class="Apple-converted-space">        </span>tournamentState.elapsedTimerInterval = null;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>dom.pauseBtn.classList.add('hidden');</p>
+<p class="p1"><span class="Apple-converted-space">        </span>dom.resumeBtn.classList.remove('hidden');</p>
+<p class="p1"><span class="Apple-converted-space">        </span>updateTimerVisuals();</p>
+<p class="p1"><span class="Apple-converted-space">    </span>};</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>const handleResumeTimer = () =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>if (!tournamentState.isTournamentStarted) {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>return;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>if (tournamentState.isPaused) {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>tournamentState.isPaused = false;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>dom.resumeBtn.classList.add('hidden');</p>
+<p class="p1"><span class="Apple-converted-space">            </span>dom.pauseBtn.classList.remove('hidden');</p>
+<p class="p2"><span class="Apple-converted-space">            </span></p>
+<p class="p1"><span class="Apple-converted-space">            </span>tournamentState.timerInterval = setInterval(() =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>if (tournamentState.timeLeftInLevel &gt; 0) {</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>tournamentState.timeLeftInLevel--;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>renderTimer();</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>updateTimerVisuals();</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>renderStats();</p>
+<p class="p1"><span class="Apple-converted-space">                </span>} else {</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>advanceToNextStage(1);</p>
+<p class="p1"><span class="Apple-converted-space">                </span>}</p>
+<p class="p1"><span class="Apple-converted-space">            </span>}, 1000);</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>if (!tournamentState.elapsedTimerInterval) {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>tournamentState.elapsedTimerInterval = setInterval(() =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>tournamentState.totalElapsedTime++;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>renderStats();</p>
+<p class="p1"><span class="Apple-converted-space">                </span>}, 1000);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>updateTimerVisuals();</p>
+<p class="p1"><span class="Apple-converted-space">    </span>};</p>
+<p class="p2"><span class="Apple-converted-space">    </span></p>
+<p class="p1"><span class="Apple-converted-space">    </span>const toggleFullscreen = () =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>if (!document.fullscreenElement) {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.documentElement.requestFullscreen().catch(err =&gt; alert(`Error: ${err.message}`));</p>
+<p class="p1"><span class="Apple-converted-space">        </span>} else if (document.exitFullscreen) {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.exitFullscreen();</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>};</p>
+<p class="p2"><span class="Apple-converted-space">    </span></p>
+<p class="p1"><span class="Apple-converted-space">    </span>const updateFullscreenState = () =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const isFullscreen = !!document.fullscreenElement;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>dom.mainContainer.classList.toggle('is-fullscreen', isFullscreen);</p>
+<p class="p1"><span class="Apple-converted-space">        </span>dom.fullscreenOpenIcon.classList.toggle('hidden', isFullscreen);</p>
+<p class="p1"><span class="Apple-converted-space">        </span>dom.fullscreenCloseIcon.classList.toggle('hidden', !isFullscreen);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>};</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>// --- MODAL CONTROLS ---</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const showSimpleAlert = (message) =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>dom.simpleAlertMessage.textContent = message;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>dom.simpleAlertModal.classList.remove('hidden');</p>
+<p class="p1"><span class="Apple-converted-space">    </span>};</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>const openSettingsModal = () =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>tournamentState.wasPausedBeforeModal = !tournamentState.isPaused;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>if(tournamentState.wasPausedBeforeModal) handlePauseTimer();</p>
+<p class="p1"><span class="Apple-converted-space">        </span>dom.gtdInput.value = settings.gtd;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>dom.settingsModal.classList.remove('hidden');</p>
+<p class="p1"><span class="Apple-converted-space">    </span>};</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const closeSettingsModal = () =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>dom.settingsModal.classList.add('hidden');</p>
+<p class="p1"><span class="Apple-converted-space">        </span>if(tournamentState.wasPausedBeforeModal) handleResumeTimer();</p>
+<p class="p1"><span class="Apple-converted-space">    </span>};</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const openPlayerModal = () =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>tournamentState.wasPausedBeforeModal = !tournamentState.isPaused;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>if(tournamentState.wasPausedBeforeModal) handlePauseTimer();</p>
+<p class="p1"><span class="Apple-converted-space">        </span>dom.playerModal.classList.remove('hidden');</p>
+<p class="p1"><span class="Apple-converted-space">    </span>};</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const closePlayerModal = () =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>if(tournamentState.isMultiBustMode) exitMultiBustMode();</p>
+<p class="p1"><span class="Apple-converted-space">        </span>dom.playerModal.classList.add('hidden');</p>
+<p class="p2"><span class="Apple-converted-space">        </span></p>
+<p class="p1"><span class="Apple-converted-space">        </span>if (tournamentState.isWinnerPendingConfirmation) {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>tournamentState.isWinnerPendingConfirmation = false;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>showWinnerConfirmation();</p>
+<p class="p1"><span class="Apple-converted-space">        </span>} else if (tournamentState.isITMAnnouncementPending) {</p>
+<p class="p1"><span class="Apple-converted-space">             </span>tournamentState.isITMAnnouncementPending = false;</p>
+<p class="p1"><span class="Apple-converted-space">             </span>tournamentState.hasAnnouncedITM = true;</p>
+<p class="p1"><span class="Apple-converted-space">             </span>dom.itmModal.classList.remove('hidden');</p>
+<p class="p1"><span class="Apple-converted-space">             </span>setTimeout(() =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>dom.itmModal.classList.add('hidden');</p>
+<p class="p1"><span class="Apple-converted-space">             </span>}, 10000);</p>
+<p class="p1"><span class="Apple-converted-space">        </span>} else if (tournamentState.isBubbleDealPending) {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>tournamentState.isBubbleDealPending = false;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>dom.bubbleTimeModal.classList.remove('hidden');</p>
+<p class="p1"><span class="Apple-converted-space">            </span>setTimeout(() =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>dom.bubbleTimeModal.classList.add('hidden');</p>
+<p class="p1"><span class="Apple-converted-space">                </span>const prizePool = Math.floor((tournamentState.totalEntries * settings.buyIn) * (1 - settings.fee / 100));</p>
+<p class="p1"><span class="Apple-converted-space">                </span>const payoutStructure = getPayoutStructure();</p>
+<p class="p1"><span class="Apple-converted-space">                </span>showDealConfirmation(payoutStructure, prizePool);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>}, 2000);</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>if(tournamentState.wasPausedBeforeModal) handleResumeTimer();</p>
+<p class="p1"><span class="Apple-converted-space">    </span>};</p>
+<p class="p2"><span class="Apple-converted-space">    </span></p>
+<p class="p1"><span class="Apple-converted-space">    </span>const showConfirmation = (message, details, onConfirm, onCancel = null, onClose = null) =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>dom.confirmationMessage.innerHTML = message;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>dom.confirmationDetails.innerHTML = details;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>dom.confirmationModal.classList.remove('hidden');</p>
+<p class="p2"><span class="Apple-converted-space">        </span></p>
+<p class="p1"><span class="Apple-converted-space">        </span>const newConfirmBtn = dom.confirmBtn.cloneNode(true);</p>
+<p class="p1"><span class="Apple-converted-space">        </span>dom.confirmBtn.parentNode.replaceChild(newConfirmBtn, dom.confirmBtn);</p>
+<p class="p1"><span class="Apple-converted-space">        </span>dom.confirmBtn = newConfirmBtn;</p>
+<p class="p2"><span class="Apple-converted-space">        </span></p>
+<p class="p1"><span class="Apple-converted-space">        </span>const newCancelBtn = dom.cancelBtn.cloneNode(true);</p>
+<p class="p1"><span class="Apple-converted-space">        </span>dom.cancelBtn.parentNode.replaceChild(newCancelBtn, dom.cancelBtn);</p>
+<p class="p1"><span class="Apple-converted-space">        </span>dom.cancelBtn = newCancelBtn;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>if (message === 'Is the tournament finished?') {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>dom.confirmBtn.textContent = 'Yes';</p>
+<p class="p1"><span class="Apple-converted-space">            </span>dom.cancelBtn.textContent = 'No';</p>
+<p class="p1"><span class="Apple-converted-space">        </span>} else {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>dom.confirmBtn.textContent = 'Confirm';</p>
+<p class="p1"><span class="Apple-converted-space">            </span>dom.cancelBtn.textContent = 'Cancel';</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>const hideConfirmation = () =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>dom.confirmationModal.classList.add('hidden');</p>
+<p class="p1"><span class="Apple-converted-space">            </span>if(onClose) onClose();</p>
+<p class="p1"><span class="Apple-converted-space">        </span>};</p>
+<p class="p2"><span class="Apple-converted-space">        </span></p>
+<p class="p1"><span class="Apple-converted-space">        </span>dom.confirmBtn.addEventListener('click', () =&gt; { onConfirm(); hideConfirmation(); }, { once: true });</p>
+<p class="p1"><span class="Apple-converted-space">        </span>dom.cancelBtn.addEventListener('click', () =&gt; { if (onCancel) onCancel(); hideConfirmation(); }, { once: true });</p>
+<p class="p1"><span class="Apple-converted-space">    </span>};</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>const openEditPlayerModal = (player) =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>tournamentState.editingPlayerId = player.id;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>dom.editPlayerNameInput.value = player.name;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>dom.editPlayerModal.classList.remove('hidden');</p>
+<p class="p1"><span class="Apple-converted-space">        </span>dom.editPlayerNameInput.focus();</p>
+<p class="p1"><span class="Apple-converted-space">    </span>};</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>const closeEditPlayerModal = () =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>dom.editPlayerModal.classList.add('hidden');</p>
+<p class="p1"><span class="Apple-converted-space">        </span>tournamentState.editingPlayerId = null;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>};</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>const savePlayerName = () =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const newName = dom.editPlayerNameInput.value.trim();</p>
+<p class="p1"><span class="Apple-converted-space">        </span>if (newName &amp;&amp; tournamentState.editingPlayerId) {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const player = players.find(p =&gt; p.id === tournamentState.editingPlayerId);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>if (player) {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>player.name = newName;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>}</p>
+<p class="p1"><span class="Apple-converted-space">            </span>closeEditPlayerModal();</p>
+<p class="p1"><span class="Apple-converted-space">            </span>updateAllUI();</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>};</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>const showWinnerConfirmation = () =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>showConfirmation('Is the tournament finished?', '',</p>
+<p class="p1"><span class="Apple-converted-space">            </span>() =&gt; { // onConfirm (Yes)</p>
+<p class="p1"><span class="Apple-converted-space">                </span>const winner = players.find(p =&gt; !p.isEliminated);</p>
+<p class="p1"><span class="Apple-converted-space">                </span>if (winner) {</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>const maxOrder = Math.max(0, ...players.map(p =&gt; p.eliminationOrder));</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>winner.eliminationOrder = maxOrder + 1;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>winner.isEliminated = true;</p>
+<p class="p2"><span class="Apple-converted-space">                    </span></p>
+<p class="p1"><span class="Apple-converted-space">                    </span>dom.winnerMessage.textContent = `Congratulations, ${winner.name}! 🏆`;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>dom.winnerModal.classList.remove('hidden');</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>setTimeout(() =&gt; dom.winnerModal.classList.add('hidden'), 300000);</p>
+<p class="p1"><span class="Apple-converted-space">                </span>}</p>
+<p class="p1"><span class="Apple-converted-space">                </span>handlePauseTimer();</p>
+<p class="p1"><span class="Apple-converted-space">                </span>updateAllUI();</p>
+<p class="p1"><span class="Apple-converted-space">            </span>},</p>
+<p class="p1"><span class="Apple-converted-space">            </span>() =&gt; { // onCancel (No)</p>
+<p class="p1"><span class="Apple-converted-space">                </span>// Do nothing</p>
+<p class="p1"><span class="Apple-converted-space">            </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>const showDealConfirmation = (payoutStructure, prizePool) =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>tournamentState.hasDealBeenOffered = true;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const wasTimerRunning = !tournamentState.isPaused;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>if(wasTimerRunning) handlePauseTimer();</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>const bubblePrize = settings.buyIn;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const adjustedPrizePool = prizePool - bubblePrize;</p>
+<p class="p2"><span class="Apple-converted-space">        </span></p>
+<p class="p1"><span class="Apple-converted-space">        </span>let detailsHtml = `&lt;div class="space-y-2 text-sm"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="grid grid-cols-4 gap-2 font-bold text-gray-300 border-b border-gray-600 pb-1"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;span&gt;Rank&lt;/span&gt;&lt;span class="text-right"&gt;Original&lt;/span&gt;&lt;span class="text-right"&gt;New&lt;/span&gt;&lt;span class="text-right text-red-400"&gt;Diff.&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;`;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>payoutStructure.forEach(p =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const originalAmount = Math.floor(prizePool * p.percent);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const newAmount = Math.floor(adjustedPrizePool * p.percent);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const difference = originalAmount - newAmount;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const percentageLoss = originalAmount &gt; 0 ? ((difference / originalAmount) * 100).toFixed(1) : 0;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>detailsHtml += `&lt;div class="grid grid-cols-4 gap-2"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;span class="font-bold text-cyan-400"&gt;${getOrdinalSuffix(p.rank)}&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;span class="text-right"&gt;${formatNumber(originalAmount)}&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;span class="text-right text-green-400"&gt;${formatNumber(newAmount)}&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;span class="text-right text-red-400"&gt;-${formatNumber(difference)} (${percentageLoss}%)&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;/div&gt;`;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>});</p>
+<p class="p2"><span class="Apple-converted-space">        </span></p>
+<p class="p1"><span class="Apple-converted-space">        </span>const bubbleRank = payoutStructure.length + 1;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>detailsHtml += `&lt;div class="grid grid-cols-4 gap-2 border-t border-gray-600 pt-2 mt-2"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;span class="font-bold text-cyan-400"&gt;${getOrdinalSuffix(bubbleRank)}&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;span class="text-right"&gt;0&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;span class="text-right text-green-400"&gt;${formatNumber(bubblePrize)}&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;span class="text-right text-green-400"&gt;+${formatNumber(bubblePrize)}&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;&lt;/div&gt;`;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>showConfirmation('Confirm Bubble Deal?', detailsHtml,<span class="Apple-converted-space"> </span></p>
+<p class="p1"><span class="Apple-converted-space">            </span>() =&gt; {<span class="Apple-converted-space"> </span></p>
+<p class="p1"><span class="Apple-converted-space">                </span>tournamentState.isDealActive = true;<span class="Apple-converted-space"> </span></p>
+<p class="p1"><span class="Apple-converted-space">                </span>if (!tournamentState.hasAnnouncedITM) {</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>tournamentState.hasAnnouncedITM = true;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>dom.itmModal.classList.remove('hidden');</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>setTimeout(() =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>dom.itmModal.classList.add('hidden');</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>}, 10000);</p>
+<p class="p1"><span class="Apple-converted-space">                </span>}</p>
+<p class="p1"><span class="Apple-converted-space">            </span>},</p>
+<p class="p1"><span class="Apple-converted-space">            </span>null,</p>
+<p class="p1"><span class="Apple-converted-space">            </span>() =&gt; { if(wasTimerRunning) handleResumeTimer(); updateAllUI(); }</p>
+<p class="p1"><span class="Apple-converted-space">        </span>);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>};</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>const saveSettings = () =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>settings.buyIn = parseInt(dom.buyInInput.value) || 400;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>settings.fee = parseInt(dom.feeInput.value) || 10;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>settings.startingStack = parseInt(dom.startingStackInput.value) || 20000;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>settings.onTimeBonus = parseInt(dom.onTimeBonusInput.value) || 2000;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>settings.gtd = parseInt(dom.gtdInput.value) || 0;</p>
+<p class="p2"><span class="Apple-converted-space">        </span></p>
+<p class="p1"><span class="Apple-converted-space">        </span>const defaultStartingStack = 20000;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>if (dom.onTimeBonusInput.valueAsNumber === (defaultStartingStack * 0.1)) {</p>
+<p class="p1"><span class="Apple-converted-space">             </span>settings.onTimeBonus = Math.round(settings.startingStack * 0.1);</p>
+<p class="p1"><span class="Apple-converted-space">             </span>dom.onTimeBonusInput.value = settings.onTimeBonus;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>tournamentState.timeLeftInLevel = settings.levelDuration;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>closeSettingsModal();</p>
+<p class="p1"><span class="Apple-converted-space">        </span>updateAllUI();</p>
+<p class="p1"><span class="Apple-converted-space">    </span>};</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>const enterMultiBustMode = () =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>tournamentState.isMultiBustMode = true;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>tournamentState.multiBustSelection = [];</p>
+<p class="p1"><span class="Apple-converted-space">        </span>dom.playerAddControls.classList.add('hidden');</p>
+<p class="p1"><span class="Apple-converted-space">        </span>dom.multiBustControls.classList.remove('hidden');</p>
+<p class="p1"><span class="Apple-converted-space">        </span>renderPlayers();</p>
+<p class="p1"><span class="Apple-converted-space">    </span>};</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>const exitMultiBustMode = () =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>tournamentState.isMultiBustMode = false;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>tournamentState.multiBustSelection = [];</p>
+<p class="p1"><span class="Apple-converted-space">        </span>dom.playerAddControls.classList.remove('hidden');</p>
+<p class="p1"><span class="Apple-converted-space">        </span>dom.multiBustControls.classList.add('hidden');</p>
+<p class="p1"><span class="Apple-converted-space">        </span>renderPlayers();</p>
+<p class="p1"><span class="Apple-converted-space">    </span>};</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>const confirmMultiBust = () =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const selectionCount = tournamentState.multiBustSelection.length;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>if (selectionCount &lt; 2) {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>showSimpleAlert('Please select 2 or more players for a multiple bust.');</p>
+<p class="p1"><span class="Apple-converted-space">            </span>return;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>const playerNames = tournamentState.multiBustSelection.map(id =&gt; players.find(p =&gt; p.id === id).name).join(', ');</p>
+<p class="p1"><span class="Apple-converted-space">        </span>showConfirmation(`Confirm bust out for ${selectionCount} players?`, `&lt;p class="text-sm text-gray-300"&gt;${playerNames}&lt;/p&gt;`, () =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>processBusts(tournamentState.multiBustSelection);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>exitMultiBustMode();</p>
+<p class="p1"><span class="Apple-converted-space">        </span>});</p>
+<p class="p1"><span class="Apple-converted-space">    </span>};</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>const startCountdown = async () =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>initAudio();</p>
+<p class="p1"><span class="Apple-converted-space">        </span>dom.startBtn.disabled = true;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const originalText = dom.timerDisplay.textContent;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>dom.timerDisplay.textContent = '3';</p>
+<p class="p1"><span class="Apple-converted-space">        </span>playBeep();</p>
+<p class="p1"><span class="Apple-converted-space">        </span>await new Promise(res =&gt; setTimeout(res, 1000));</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>dom.timerDisplay.textContent = '2';</p>
+<p class="p1"><span class="Apple-converted-space">        </span>playBeep();</p>
+<p class="p1"><span class="Apple-converted-space">        </span>await new Promise(res =&gt; setTimeout(res, 1000));</p>
+<p class="p2"><span class="Apple-converted-space">        </span></p>
+<p class="p1"><span class="Apple-converted-space">        </span>dom.timerDisplay.textContent = '1';</p>
+<p class="p1"><span class="Apple-converted-space">        </span>playBeep();</p>
+<p class="p1"><span class="Apple-converted-space">        </span>await new Promise(res =&gt; setTimeout(res, 1000));</p>
+<p class="p2"><span class="Apple-converted-space">        </span></p>
+<p class="p1"><span class="Apple-converted-space">        </span>dom.timerDisplay.textContent = originalText;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>playChime();</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>dom.startBtn.classList.add('hidden');</p>
+<p class="p1"><span class="Apple-converted-space">        </span>dom.runningControls.classList.remove('hidden');</p>
+<p class="p1"><span class="Apple-converted-space">        </span>dom.runningControls.style.display = 'flex';</p>
+<p class="p1"><span class="Apple-converted-space">        </span>tournamentState.isTournamentStarted = true;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>handleResumeTimer();</p>
+<p class="p1"><span class="Apple-converted-space">        </span>dom.startBtn.disabled = false;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>// --- INITIALIZATION ---</p>
+<p class="p1"><span class="Apple-converted-space">    </span>dom.addPlayerBtn.addEventListener('click', handleAddPlayer);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>dom.playerNameInput.addEventListener('keyup', (e) =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>if (e.key === 'Enter') handleAddPlayer();</p>
+<p class="p1"><span class="Apple-converted-space">    </span>});</p>
+<p class="p2"><span class="Apple-converted-space">    </span></p>
+<p class="p1"><span class="Apple-converted-space">    </span>dom.playerList.addEventListener('click', handlePlayerAction);</p>
+<p class="p2"><span class="Apple-converted-space">    </span></p>
+<p class="p1"><span class="Apple-converted-space">    </span>window.addEventListener('click', (event) =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>if (!event.target.matches('.more-options-btn') &amp;&amp; !event.target.closest('.more-options-btn')) {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.querySelectorAll('.dropdown-content').forEach(menu =&gt; menu.classList.remove('show'));</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>});</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>dom.playerList.addEventListener('change', (e) =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>if (e.target.classList.contains('multi-bust-checkbox')) {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const playerId = parseInt(e.target.dataset.id);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>if (e.target.checked) {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>tournamentState.multiBustSelection.push(playerId);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>} else {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>tournamentState.multiBustSelection = tournamentState.multiBustSelection.filter(id =&gt; id !== playerId);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>});</p>
+<p class="p1"><span class="Apple-converted-space">    </span>dom.startBtn.addEventListener('click', () =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>if (players.length === 0) {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>showSimpleAlert('Please add at least one player to start the tournament.');</p>
+<p class="p1"><span class="Apple-converted-space">            </span>return;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>startCountdown();</p>
+<p class="p1"><span class="Apple-converted-space">    </span>});</p>
+<p class="p1"><span class="Apple-converted-space">    </span>dom.nextLevelBtn.addEventListener('click', () =&gt; showConfirmation('Advance to the next stage?', '', () =&gt; advanceToNextStage(1)));</p>
+<p class="p1"><span class="Apple-converted-space">    </span>dom.prevLevelBtn.addEventListener('click', () =&gt; showConfirmation('Go back to the previous stage?', '', () =&gt; handleLevelChange(-1)));</p>
+<p class="p1"><span class="Apple-converted-space">    </span>dom.forwardBtn.addEventListener('click', () =&gt; handleTimeAdjustment(60));</p>
+<p class="p1"><span class="Apple-converted-space">    </span>dom.rewindBtn.addEventListener('click', () =&gt; handleTimeAdjustment(-60));</p>
+<p class="p1"><span class="Apple-converted-space">    </span>dom.pauseBtn.addEventListener('click', handlePauseTimer);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>dom.resumeBtn.addEventListener('click', handleResumeTimer);</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>dom.settingsToggleBtn.addEventListener('click', openSettingsModal);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>dom.settingsSaveBtn.addEventListener('click', saveSettings);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>dom.settingsCancelBtn.addEventListener('click', closeSettingsModal);</p>
+<p class="p2"><span class="Apple-converted-space">    </span></p>
+<p class="p1"><span class="Apple-converted-space">    </span>dom.playerToggleBtn.addEventListener('click', openPlayerModal);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>dom.playerModalCloseBtn.addEventListener('click', closePlayerModal);</p>
+<p class="p2"><span class="Apple-converted-space">    </span></p>
+<p class="p1"><span class="Apple-converted-space">    </span>dom.multiBustBtn.addEventListener('click', enterMultiBustMode);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>dom.multiBustCancelBtn.addEventListener('click', exitMultiBustMode);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>dom.multiBustConfirmBtn.addEventListener('click', confirmMultiBust);</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>dom.editPlayerSaveBtn.addEventListener('click', savePlayerName);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>dom.editPlayerCancelBtn.addEventListener('click', closeEditPlayerModal);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>dom.editPlayerNameInput.addEventListener('keyup', (e) =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>if (e.key === 'Enter') savePlayerName();</p>
+<p class="p1"><span class="Apple-converted-space">    </span>});</p>
+<p class="p2"><span class="Apple-converted-space">    </span></p>
+<p class="p1"><span class="Apple-converted-space">    </span>dom.fullscreenBtn.addEventListener('click', toggleFullscreen);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>document.addEventListener('fullscreenchange', updateFullscreenState);</p>
+<p class="p2"><span class="Apple-converted-space">    </span></p>
+<p class="p1"><span class="Apple-converted-space">    </span>dom.simpleAlertOkBtn.addEventListener('click', () =&gt; dom.simpleAlertModal.classList.add('hidden'));</p>
+<p class="p1"><span class="Apple-converted-space">    </span>dom.winnerModalCloseBtn.addEventListener('click', () =&gt; dom.winnerModal.classList.add('hidden'));</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>// Initial Render</p>
+<p class="p1"><span class="Apple-converted-space">    </span>updateAllUI();</p>
+<p class="p1">});</p>
+<p class="p1">&lt;/script&gt;</p>
+<p class="p1">&lt;/body&gt;</p>
+<p class="p1">&lt;/html&gt;</p>
+<p class="p2"><br></p>
+</body>
+</html>
